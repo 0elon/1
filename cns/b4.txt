@@ -1,1 +1,31 @@
+Program 4: Netcat TCP Communication Simulation (Source 4)
+
+This program uses Netcat to simulate a TCP communication session and observes the handshake, data exchange, and termination.
+
+Phase              System          Steps and Commands
+
+1. Preparation     Kali/Ubuntu     Check IP addresses using ifconfig and ensure reachability using ping.
+
+2. Capture Setup   Kali Linux      1. Open Wireshark.
+                                   2. Select the internal network interface.
+                                   3. Apply filter: tcp.port==5000.
+
+3. Server Setup    Ubuntu          1. Allow port 5000 in UFW: ufw allow 5000.
+                   (Server)        2. Start the TCP server (listening): nc -lvp 5000.
+
+4. Client          Kali Linux      Connect to the server: nc -v <Ubuntu IP> 5000.
+   Connection      (Client)
+
+5. Data Exchange   Both            Type messages in both terminals:
+                                   "hello ubuntu" (Kali)
+                                   "hello kali"   (Ubuntu)
+
+6. Termination &   Both/Wireshark  1. Close the connection in both terminals using CTRL+C.
+   Analysis                        2. Observe in Wireshark:
+                                      - TCP 3-Way Handshake (SYN, SYN/ACK, ACK)
+                                      - TCP Data Packets ([TCP segment data] with typed messages)
+                                      - TCP Connection Termination (FIN, ACK, FIN/ACK, ACK)
+
+Learning Objective:
+To clearly observe the three fundamental phases of TCP communication—connection establishment, data transfer, and connection termination—and identify the associated flags and payload data in a packet capture tool.
 
