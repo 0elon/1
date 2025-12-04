@@ -1,0 +1,65 @@
+Program 2: Scapy Packet Crafting and Firewall Testing (Source 2)
+
+This program uses a custom Python script with Scapy to craft and send ICMP, TCP, and UDP packets to a target Ubuntu VM configured with the UFW firewall.
+
+Phase            System        Steps and Commands
+
+1. Network Setup  Kali/Ubuntu  Check the IP addresses using the ifconfig command.
+
+2. Configure Firewall  Ubuntu (Target)
+   1. Enable UFW: sudo ufw enable.
+   2. Add rules: sudo ufw deny 80/tcp (block web traffic) and sudo ufw allow 22/tcp (allow SSH).
+   3. Block ICMP echo requests (Pings): sudo iptables -I INPUT 1 -p icmp --icmp-type echo-request -j DROP.
+
+3. Scapy Script  Kali Linux
+   Write the packet_lab.py script (provided below).
+
+4. Execution & Capture  Kali Linux
+   1. Start Wireshark, select the interface (e.g., eth0).
+   2. Run the script: sudo python3 packet_lab.py.
+
+5. Observation & Cleanup  Kali/Ubuntu
+   1. Check Wireshark output using filters like icmp, tcp.flags.syn==1, or tcp.port==22.
+   2. Test connections manually (optional): ping <Ubuntu-ip>, nc –v <Ubuntu-ip> 80, nc –v <Ubuntu-ip> 22, or ssh ubuntu@<ubuntu-ip>.
+   3. Remove the iptables rule: sudo iptables –D INPUT -p icmp --icmp-type echo-request -j DROP.
+
+Shortened Scapy Code (packet_lab.py)
+
+#!/usr/bin/env python3
+from scapy.all import *
+
+# Configuration Variables
+TARGET_IP = "192.168.56.103"  # Target Ubuntu VM IP (UPDATE THIS)
+DEST_PORT_BLOCKED = 80       # Denied port (from UFW rule)
+DEST_PORT_ALLOWED = 22       # Allowed port (SSH)
+UDP_PORT = 53
+
+def main():
+    # 1. ICMP Echo Request (should be dropped by iptables rule)
+    print("[*] Sending ICMP Echo Request...")
+    send(IP(dst=TARGET_IP) / ICMP(), verbose=0)
+
+    # 2. TCP SYN (to allowed port 22 - expected SYN/ACK response)
+    print(f"[*] Sending TCP SYN to port {DEST_PORT_ALLOWED}...")
+    send(IP(dst=TARGET_IP) / TCP(dport=DEST_PORT_ALLOWED, flags="S"), verbose=0)
+
+    # 3. TCP NULL (to allowed port 22 - expected RST response if no service running, or dropped)
+    print(f"[*] Sending TCP NULL packet (No flags)...")
+    send(IP(dst=TARGET_IP) / TCP(dport=DEST_PORT_ALLOWED, flags=0), verbose=0)
+
+    # 4. TCP FIN (to allowed port 22 - expected RST response if no service running, or dropped)
+    print(f"[*] Sending TCP FIN packet...")
+    send(IP(dst=TARGET_IP) / TCP(dport=DEST_PORT_ALLOWED, flags="F"), verbose=0)
+
+    # 5. UDP Packet (to port 53 - may generate ICMP port unreachable if no listener)
+    print(f"[*] Sending UDP to port {UDP_PORT}...")
+    send(IP(dst=TARGET_IP) / UDP(dport=UDP_PORT) / Raw(load="TestUDP"), verbose=0)
+
+    # 6. TCP Packet with Custom Payload (to blocked port 80 - expected RST or dropped)
+    print("[*] Sending TCP packet with custom payload to blocked port...")
+    send(IP(dst=TARGET_IP) / TCP(dport=DEST_PORT_BLOCKED, flags="PA") / Raw(load="HelloFromScapy"), verbose=0)
+
+    print("\n[+] Experiment Completed.")
+
+if __name__ == "__main__":
+    main()
