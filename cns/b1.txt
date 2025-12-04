@@ -1,0 +1,32 @@
+Program 1: FTP Login Capture and Analysis (Source 1)
+This program captures and analyzes FTP login credentials transmitted in plaintext.
+
+A. Setup FTP Server      Ubuntu VM
+
+1. Install FTP server: sudo apt-get install vsftpd.
+2. Start FTP service: sudo systemctl start vsftpd.
+3. Enable service on boot: sudo systemctl enable vsftpd.
+4. (If needed) Allow port 21: Sudo ufw allow 21/tcp.
+5. Create a test user: sudo adduser ftpuser (password: 12345).
+
+B & C. Capture & Login   Kali Linux (Client)
+
+1. Start Wireshark and select the network interface (e.g., eth0).
+2. Start packet capture.
+3. Open a terminal and connect: ftp <ubuntu-ip> (e.g., ftp 192.168.56.105).
+4. Enter username: ftpuser.
+5. Enter password: 12345.
+6. Optionally execute commands (e.g., ls, pwd).
+7. Exit FTP: bye.
+8. Stop the Wireshark capture.
+
+D. Analyze Packets
+
+Wireshark
+
+1. Apply display filter: ftp (or tcp.port==21).
+2. Locate the USER command packet and verify the username.
+3. Locate the PASS command packet and verify the password.
+4. Observe the server responses, such as 331 (password required) and 230 (login successful).
+
+Learning Objective: To visually demonstrate that FTP transmits authentication credentials (username and password) in clear, unencrypted text, making it vulnerable to packet sniffing.
