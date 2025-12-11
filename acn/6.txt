@@ -1,0 +1,56 @@
+// RPCServer.java
+import java.net.*; import java.io.*;
+
+public class RPCServer {
+    public static void main(String[] a) throws Exception {
+        ServerSocket ss = new ServerSocket(5000);
+        System.out.println("RPC Server Ready");
+        while (true) {
+            Socket s = ss.accept();
+            BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
+            PrintWriter out = new PrintWriter(s.getOutputStream(), true);
+
+            String req = in.readLine(); // Example: "ADD 5 3"
+            String[] p = req.split(" ");
+            String op = p[0];
+            int x = Integer.parseInt(p[1]), y = Integer.parseInt(p[2]);
+
+            int result;
+            try {
+                switch (op) {
+                    case "ADD": result = x + y; break;
+                    case "SUB": result = x - y; break;
+                    case "MUL": result = x * y; break;
+                    case "DIV":
+                        if (y == 0) throw new Exception("DIV_BY_ZERO");
+                        result = x / y; break;
+                    default: throw new Exception("BAD_OP");
+                }
+                out.println("OK " + result);  // reply message
+            } catch (Exception e) {
+                out.println("ERR " + e.getMessage()); // error reply
+            }
+            s.close();
+        }
+    }
+}
+|// RPCClient.java
+import java.net.*; import java.io.*;
+
+public class RPCClient {
+    public static void main(String[] a) throws Exception {
+        BufferedReader kb = new BufferedReader(new InputStreamReader(System.in));
+
+        System.out.println("Enter RPC call (e.g., ADD 5 3):");
+        String call = kb.readLine();
+
+        Socket s = new Socket("localhost", 5000);
+        PrintWriter out = new PrintWriter(s.getOutputStream(), true);
+        BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
+
+        out.println(call);                 // send call message
+        System.out.println("Reply: " + in.readLine());
+
+        s.close();
+    }
+}
