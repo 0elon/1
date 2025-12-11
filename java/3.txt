@@ -1,0 +1,52 @@
+import java.util.*;
+
+class Complex {
+    private double r, i;
+
+    Complex(double r, double i) { 
+        this.r = r; 
+        this.i = i; 
+    }
+
+    Complex add(Complex o) { 
+        return new Complex(r + o.r, i + o.i); 
+    }
+
+    Complex sub(Complex o) { 
+        return new Complex(r - o.r, i - o.i); 
+    }
+
+    boolean same(Complex o) { 
+        return r == o.r && i == o.i; 
+    }
+
+    // Simple method to display without toString
+    void show() {
+        System.out.println(r + (i >= 0 ? " + " : " - ") + Math.abs(i) + "i");
+    }
+}
+
+public class ComplexDemo {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        double r1 = sc.nextDouble(), i1 = sc.nextDouble();
+        double r2 = sc.nextDouble(), i2 = sc.nextDouble();
+
+        Complex c1 = new Complex(r1, i1);
+        Complex c2 = new Complex(r2, i2);
+
+        System.out.print("C1 = "); c1.show();
+        System.out.print("C2 = "); c2.show();
+
+        Complex sum = c1.add(c2);
+        System.out.print("C1 + C2 = "); sum.show();
+
+        Complex diff = c1.sub(c2);
+        System.out.print("C1 - C2 = "); diff.show();
+
+        System.out.println(c1.same(c2) ? "Equal" : "Not Equal");
+
+        sc.close();
+    }
+}
