@@ -1,0 +1,39 @@
+class Shared {
+    int num; boolean available=false;
+    
+    synchronized void produce(int n) throws InterruptedException {
+        while(available) wait();
+        num=n;
+        System.out.println("Produced: " + n);
+        available=true;
+        notify();
+    }
+
+    synchronized void consume() throws InterruptedException {
+        while(!available) wait();
+        System.out.println("Consumed: " + num);
+        available=false;
+        notify();
+    }
+}
+
+public class ProducerConsumerDemo {
+    public static void main(String[] args){
+        Shared s=new Shared();
+
+        Thread producer=new Thread(() -> {
+            try{
+                for(int i=1;i<=5;i++) s.produce(i);
+            }catch(Exception e){}
+        });
+
+        Thread consumer=new Thread(() -> {
+            try{
+                for(int i=1;i<=5;i++) s.consume();
+            }catch(Exception e){}
+        });
+
+        producer.start();
+        consumer.start();
+    }
+}
