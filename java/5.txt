@@ -1,0 +1,27 @@
+public class StringComparator {
+
+    // Version 1: Full comparison
+    public static boolean usrstrcmp(String s1, String s2) {
+        if (s1.length() != s2.length()) return false;
+        for (int i = 0; i < s1.length(); i++)
+            if (s1.charAt(i) != s2.charAt(i)) return false;
+        return true;
+    }
+
+    // Version 2: Partial comparison (first n characters)
+    public static boolean usrstrcmp(String s1, String s2, int n) {
+        int len = Math.min(n, Math.min(s1.length(), s2.length()));
+        for (int i = 0; i < len; i++)
+            if (s1.charAt(i) != s2.charAt(i)) return false;
+        return true;
+    }
+
+    public static void main(String[] args) {
+        String a = "HelloJava", b = "HelloJawa", c = "HelloJava";
+
+        System.out.println("Full compare a vs b: " + usrstrcmp(a, b));   // false
+        System.out.println("Full compare a vs c: " + usrstrcmp(a, c));   // true
+        System.out.println("First 5 chars a vs b: " + usrstrcmp(a, b, 5)); // true
+        System.out.println("First 7 chars a vs b: " + usrstrcmp(a, b, 7)); // false
+    }
+}
