@@ -1,0 +1,28 @@
+interface Compute {
+    double convert(); 
+}
+
+class GigaBytesToBytes implements Compute {
+    double gb;
+    GigaBytesToBytes(double gb){ this.gb=gb; }
+    public double convert(){ return gb * 1024 * 1024 * 1024; }
+}
+
+class EuroToRupees implements Compute {
+    double euros;
+    EuroToRupees(double e){ this.euros=e; }
+    public double convert(){ return euros * 90; } // fixed rate
+}
+
+public class ConversionDemo {
+    public static void main(String[] args) {
+        System.out.println("--- Unit Conversion Demo ---");
+
+        // Polymorphism: interface reference
+        Compute c1 = new GigaBytesToBytes(2.5);
+        System.out.println("2.5 GB = " + (long)c1.convert() + " Bytes");
+
+        Compute c2 = new EuroToRupees(500);
+        System.out.println("500 Euros = " + c2.convert() + " Rupees");
+    }
+}
