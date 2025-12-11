@@ -1,0 +1,29 @@
+import java.util.*;
+
+public class DivisionOperation {
+    public static void main(String[] args){
+        Scanner sc = new Scanner(System.in);
+        try {
+            System.out.print("Enter Numerator (positive): ");
+            int num = sc.nextInt();
+            System.out.print("Enter Denominator (positive, non-zero): ");
+            int den = sc.nextInt();
+
+            if(num <= 0 || den <= 0) {
+                throw new IllegalArgumentException("Inputs must be positive and denominator non-zero!");
+            }
+
+            int result = num / den; // may throw ArithmeticException if den == 0
+            System.out.println("Result: " + num + " / " + den + " = " + result);
+
+        } catch (ArithmeticException e) {
+            System.out.println("Error: Division by zero!");
+        } catch (InputMismatchException e) {
+            System.out.println("Error: Please enter integers only!");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error: " + e.getMessage());
+        } finally {
+            sc.close();
+        }
+    }
+}
