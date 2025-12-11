@@ -1,0 +1,42 @@
+// Peer.java
+import java.io.*; import java.net.*; import java.util.*;
+
+public class Peer {
+    public static void main(String[] a) throws Exception {
+        Scanner sc = new Scanner(System.in);
+
+        // Server thread
+        new Thread(() -> {
+            try (ServerSocket ss = new ServerSocket(5000)) {
+                while (true) try (Socket s = ss.accept()) {
+                    BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
+                    PrintWriter out = new PrintWriter(s.getOutputStream(), true);
+                    String[] msg = in.readLine().split(" ");
+                    if ("ADD".equals(msg[0])) out.println(Integer.parseInt(msg[1]) + Integer.parseInt(msg[2]));
+                    else if ("FILE".equals(msg[0]))
+                        out.println(new String(java.nio.file.Files.readAllBytes(new File(msg[1]).toPath())));
+                } catch (Exception e) {}
+            } catch (Exception e) {}
+        }).start();
+
+        // Client menu
+        while (true) {
+            System.out.print("1) Add  2) File\nChoice: ");
+            int ch = sc.nextInt(); sc.nextLine();
+            System.out.print("Peer IP: "); String ip = sc.nextLine();
+            try (Socket s = new Socket(ip, 5000);
+                 PrintWriter out = new PrintWriter(s.getOutputStream(), true);
+                 BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()))) {
+
+                if (ch == 1) {
+                    System.out.print("Enter a b: ");
+                    out.println("ADD " + sc.nextInt() + " " + sc.nextInt());
+                } else {
+                    System.out.print("Enter filename: ");
+                    out.println("FILE " + sc.nextLine());
+                }
+                System.out.println("Reply:\n" + in.readLine());
+            }
+        }
+    }
+}
