@@ -1,0 +1,55 @@
+import java.util.*;
+
+class Employee {
+    String name, dept, desig;
+    int id, age;
+    double salary;
+
+    Employee(String name, int id, String dept, int age, String desig, double salary) {
+        this.name = name;
+        this.id = id;
+        this.dept = dept;
+        this.age = age;
+        this.desig = desig;
+        this.salary = salary;
+    }
+
+    void show() {
+        System.out.println(name + " | " + id + " | " + dept + " | " + age + " | " + desig + " | $" + salary);
+    }
+}
+
+public class EmployeeDatabase {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        List<Employee> employees = new ArrayList<>();
+
+        int n = sc.nextInt(); sc.nextLine(); // number of employees
+        for (int i = 0; i < n; i++) {
+            String name = sc.nextLine();
+            int id = sc.nextInt(); sc.nextLine();
+            String dept = sc.nextLine();
+            int age = sc.nextInt(); sc.nextLine();
+            String desig = sc.nextLine();
+            double salary = sc.nextDouble(); sc.nextLine();
+            employees.add(new Employee(name, id, dept, age, desig, salary));
+        }
+
+        System.out.println("\n=== Employee Details ===");
+        for (Employee e : employees) e.show();
+
+        double salesSum = 0;
+        for (Employee e : employees)
+            if (e.dept.equalsIgnoreCase("sales")) salesSum += e.salary;
+        System.out.println("\nTotal Sales Salary: $" + salesSum);
+
+        Employee best = null;
+        for (Employee e : employees)
+            if (e.dept.equalsIgnoreCase("purchase") && e.desig.equalsIgnoreCase("manager"))
+                if (best == null || e.salary > best.salary) best = e;
+
+        System.out.println("\nHighest Paid Manager (Purchase):");
+        if (best != null) best.show(); else System.out.println("None found.");
+        sc.close();
+    }
+}
