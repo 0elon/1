@@ -1,0 +1,41 @@
+class Person {
+    String name; int age; String gender;
+    Person(String n,int a,String g){ name=n; age=a; gender=g; }
+}
+
+class Student extends Person {
+    String course; int roll;
+    Student(String n,int a,String g,String c,int r){ super(n,a,g); course=c; roll=r; }
+}
+
+class Employee extends Person {
+    String dept; int id;
+    Employee(String n,int a,String g,String d,int i){ super(n,a,g); dept=d; id=i; }
+}
+
+public class InheritanceDemo {
+    public static void main(String[] args) {
+        Student[] s = {
+            new Student("Ravi",20,"Male","CSE",101),
+            new Student("Priya",21,"Female","ECE",102),
+            new Student("Arjun",22,"Male","EEE",103),
+            new Student("Neha",20,"Female","ME",104),
+            new Student("Kiran",23,"Male","IT",105)
+        };
+        Employee[] e = {
+            new Employee("Suresh",30,"Male","HR",201),
+            new Employee("Meena",28,"Female","Finance",202),
+            new Employee("Rohan",35,"Male","IT",203),
+            new Employee("Asha",32,"Female","Admin",204),
+            new Employee("Vikram",40,"Male","Marketing",205)
+        };
+
+        System.out.println("=== STUDENTS ===");
+        for(Student st:s)
+            System.out.println(st.name+" | "+st.age+" | "+st.gender+" | "+st.course+" | "+st.roll);
+
+        System.out.println("\n=== EMPLOYEES ===");
+        for(Employee em:e)
+            System.out.println(em.name+" | "+em.age+" | "+em.gender+" | "+em.dept+" | "+em.id);
+    }
+}
