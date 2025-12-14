@@ -1,30 +1,36 @@
 //Step1 : Kali linux vm send a UDP broadcast message
 
+#!/usr/bin/env python3
 import socket
 import time
+# Create UDP socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+# Send 5 broadcast messages
 for i in range(5):
-msg = &quot;DEVICE_DISCOVERY_{}&quot;.format(i).encode()
-sock.sendto(msg, (&quot;255.255.255.255&quot;, 4000))
-print(&quot;[Sent]&quot;, msg)
-time.sleep(1)
+    msg = f"DEVICE_DISCOVERY_{i}".encode()
+    sock.sendto(msg, ("255.255.255.255", 4000))
+    print("[Sent]", msg)
+    time.sleep(1)
+
 
 //Step 2: ubuntu vm Listen for broadcast traffic
 
+#!/usr/bin/env python3
 import socket
+# Create UDP socket and bind to port 4000
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-sock.bind((&quot;&quot;, 4000))
-print(&quot;Listening for broadcast packets...&quot;)
+sock.bind(("", 4000))
+print("Listening for broadcast packets...")
 try:
-while True:
-data, addr = sock.recvfrom(1024)
-print(f&quot;Broadcast from {addr}: {data.decode()}&quot;)
+    while True:
+        data, addr = sock.recvfrom(1024)
+        print(f"Broadcast from {addr}: {data.decode()}")
 except KeyboardInterrupt:
-print(“Listener Stopped Manually”)
-
+    print("Listener Stopped Manually")
 finally:
-sock.close()
+    sock.close()
+
 
 //Step 3: open Wireshark in Kali linux and Analyze the packets
 udp.port == 4000
