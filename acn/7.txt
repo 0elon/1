@@ -54,3 +54,36 @@ public class RPCClient {
         s.close();
     }
 }
+
+import java.net.*;import java.io.*;
+class s{
+ public static void main(String[]a)throws Exception{
+  for(ServerSocket ss=new ServerSocket(5000);;){
+   try(Socket s=ss.accept()){
+    var i=new BufferedReader(new InputStreamReader(s.getInputStream()));
+    var o=new PrintWriter(s.getOutputStream(),true);
+    var p=i.readLine().split(" ");
+    int x=Integer.parseInt(p[1]),y=Integer.parseInt(p[2]);
+    try{
+     o.println("OK "+(p[0].equals("ADD")?x+y:
+                      p[0].equals("SUB")?x-y:
+                      p[0].equals("MUL")?x*y:x/y));
+    }catch(Exception e){o.println("ERR");}
+   }
+  }
+ }
+}
+
+
+import java.net.*;import java.io.*;
+class c{
+ public static void main(String[]a)throws Exception{
+  try(Socket s=new Socket("localhost",5000)){
+   var o=new PrintWriter(s.getOutputStream(),true);
+   var i=new BufferedReader(new InputStreamReader(s.getInputStream()));
+   o.println(new BufferedReader(new InputStreamReader(System.in)).readLine());
+   System.out.println(i.readLine());
+  }
+ }
+}
+
