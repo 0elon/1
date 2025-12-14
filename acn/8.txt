@@ -1,42 +1,70 @@
-// Peer.java
-import java.io.*; import java.net.*; import java.util.*;
+import java.net.*;
+import java.io.*;
+import java.nio.file.*;
 
 public class Peer {
     public static void main(String[] a) throws Exception {
-        Scanner sc = new Scanner(System.in);
 
-        // Server thread
+        // Server part: always runs
         new Thread(() -> {
             try (ServerSocket ss = new ServerSocket(5000)) {
-                while (true) try (Socket s = ss.accept()) {
-                    BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
-                    PrintWriter out = new PrintWriter(s.getOutputStream(), true);
-                    String[] msg = in.readLine().split(" ");
-                    if ("ADD".equals(msg[0])) out.println(Integer.parseInt(msg[1]) + Integer.parseInt(msg[2]));
-                    else if ("FILE".equals(msg[0]))
-                        out.println(new String(java.nio.file.Files.readAllBytes(new File(msg[1]).toPath())));
-                } catch (Exception e) {}
+                while (true) {
+                    Socket s = ss.accept();
+                    BufferedReader in = new BufferedReader(
+                            new InputStreamReader(s.getInputStream()));
+                    PrintWriter out = new PrintWriter(
+                            s.getOutputStream(), true);
+
+                    String[] m = in.readLine().split(" ");
+                    if (m[0].equals("ADD"))
+                        out.println(Integer.parseInt(m[1]) + Integer.parseInt(m[2]));
+                    else if (m[0].equals("FILE"))
+                        out.println(Files.readString(Path.of(m[1])));
+
+                    s.close();
+                }
             } catch (Exception e) {}
         }).start();
 
-        // Client menu
-        while (true) {
-            System.out.print("1) Add  2) File\nChoice: ");
-            int ch = sc.nextInt(); sc.nextLine();
-            System.out.print("Peer IP: "); String ip = sc.nextLine();
-            try (Socket s = new Socket(ip, 5000);
-                 PrintWriter out = new PrintWriter(s.getOutputStream(), true);
-                 BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()))) {
+        // Client part: runs only if arguments are given
+        if (a.length < 2) return;
 
-                if (ch == 1) {
-                    System.out.print("Enter a b: ");
-                    out.println("ADD " + sc.nextInt() + " " + sc.nextInt());
-                } else {
-                    System.out.print("Enter filename: ");
-                    out.println("FILE " + sc.nextLine());
-                }
-                System.out.println("Reply:\n" + in.readLine());
-            }
-        }
+        Socket s = new Socket(a[0], 5000);
+        PrintWriter out = new PrintWriter(s.getOutputStream(), true);
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(s.getInputStream()));
+
+        out.println(a[1]);
+        System.out.println("Reply: " + in.readLine());
+        s.close();
     }
+}
+
+
+import java.net.*;import java.io.*;import java.nio.file.*;
+class Server{
+ public static void main(String[]a)throws Exception{
+  for(ServerSocket ss=new ServerSocket(5000);;){
+   Socket s=ss.accept();
+   var i=new BufferedReader(new InputStreamReader(s.getInputStream()));
+   var o=new PrintWriter(s.getOutputStream(),true);
+   var m=i.readLine().split(" ");
+   o.println(m[0].equals("ADD")?
+    Integer.parseInt(m[1])+Integer.parseInt(m[2]):
+    Files.readString(Path.of(m[1])));
+   s.close();
+  }
+ }
+}
+
+import java.net.*;import java.io.*;
+class Client{
+ public static void main(String[]a)throws Exception{
+  Socket s=new Socket("localhost",5000);
+  var o=new PrintWriter(s.getOutputStream(),true);
+  var i=new BufferedReader(new InputStreamReader(s.getInputStream()));
+  o.println(new BufferedReader(new InputStreamReader(System.in)).readLine());
+  System.out.println(i.readLine());
+  s.close();
+ }
 }
