@@ -13,85 +13,86 @@ Phase            System        Steps and Commands
 
 3. Scapy Script  Kali Linux
    Write the packet_lab.py script (provided below).
-   #!/usr/bin/env python3
+
+#!/usr/bin/env python3
 from scapy.all import *
 import time
 
-TARGET_IP = &quot;192.168.56.103&quot; # Ubuntu VM
-DEST_PORT = 80
-DEST_PORT2 = 22
-UDP_PORT = 53
-PACKET_DELAY = 1
+# Configuration
+TARGET_IP = "192.168.56.103"  # Ubuntu VM
+DEST_PORT = 80                # HTTP port
+DEST_PORT2 = 22               # SSH port
+UDP_PORT = 53                 # DNS port
+PACKET_DELAY = 1              # Delay between packets
 
 def banner():
-print(&quot;\n========================================&quot;)
-print(&quot; SCAPY PACKET-CRAFTING LAB SCRIPT&quot;)
-print(&quot;========================================\n&quot;)
+    print("\n========================================")
+    print(" SCAPY PACKET-CRAFTING LAB SCRIPT")
+    print("========================================\n")
 
 def send_icmp():
-print(&quot;[*] Sending ICMP Echo Request...&quot;)
-packet = IP(dst=TARGET_IP) / ICMP()
-send(packet, verbose=0)
-print(&quot;[+] ICMP packet sent.\n&quot;)
+    print("[*] Sending ICMP Echo Request...")
+    packet = IP(dst=TARGET_IP) / ICMP()
+    send(packet, verbose=0)
+    print("[+] ICMP packet sent.\n")
 
 def send_tcp_syn(destination_port):
-print(f&quot;[*] Sending TCP SYN to port {destination_port}...&quot;)
-packet = IP(dst=TARGET_IP) / TCP(dport=destination_port, flags=&quot;S&quot;)
-send(packet, verbose=0)
-print(&quot;[+] TCP SYN sent.\n&quot;)
+    print(f"[*] Sending TCP SYN to port {destination_port}...")
+    packet = IP(dst=TARGET_IP) / TCP(dport=destination_port, flags="S")
+    send(packet, verbose=0)
+    print("[+] TCP SYN sent.\n")
 
 def send_tcp_null(destination_port):
-print(&quot;[*] Sending TCP NULL packet...&quot;)
-packet = IP(dst=TARGET_IP) / TCP(dport=destination_port, flags=0)
-send(packet, verbose=0)
-print(&quot;[+] NULL packet sent.\n&quot;)
+    print("[*] Sending TCP NULL packet...")
+    packet = IP(dst=TARGET_IP) / TCP(dport=destination_port, flags=0)
+    send(packet, verbose=0)
+    print("[+] NULL packet sent.\n")
 
 def send_tcp_fin(destination_port):
-print(&quot;[*] Sending TCP FIN packet...&quot;)
-packet = IP(dst=TARGET_IP) / TCP(dport=destination_port, flags=&quot;F&quot;)
-send(packet, verbose=0)
-print(&quot;[+] FIN sent.\n&quot;)
+    print("[*] Sending TCP FIN packet...")
+    packet = IP(dst=TARGET_IP) / TCP(dport=destination_port, flags="F")
+    send(packet, verbose=0)
+    print("[+] FIN sent.\n")
 
 def send_udp():
-print(f&quot;[*] Sending UDP to port {UDP_PORT}...&quot;)
-packet = IP(dst=TARGET_IP) / UDP(dport=UDP_PORT) /
-Raw(load=&quot;TestUDP&quot;)
-send(packet, verbose=0)
-print(&quot;[+] UDP sent.\n&quot;)
+    print(f"[*] Sending UDP to port {UDP_PORT}...")
+    packet = IP(dst=TARGET_IP) / UDP(dport=UDP_PORT) / Raw(load="TestUDP")
+    send(packet, verbose=0)
+    print("[+] UDP sent.\n")
 
 def send_custom_payload():
-print(&quot;[*] Sending TCP packet with custom payload...&quot;)
-packet = IP(dst=TARGET_IP) / TCP(dport=DEST_PORT, flags=&quot;PA&quot;) /
-Raw(load=&quot;HelloFromScapy&quot;)
-send(packet, verbose=0)
-print(&quot;[+] Payload packet sent.\n&quot;)
+    print("[*] Sending TCP packet with custom payload...")
+    packet = IP(dst=TARGET_IP) / TCP(dport=DEST_PORT, flags="PA") / Raw(load="HelloFromScapy")
+    send(packet, verbose=0)
+    print("[+] Payload packet sent.\n")
 
 def main():
-banner()
-time.sleep(1)
+    banner()
+    time.sleep(1)
 
-# Send packets
-send_icmp()
-time.sleep(PACKET_DELAY)
+    # Send packets step by step
+    send_icmp()
+    time.sleep(PACKET_DELAY)
 
-send_tcp_syn(DEST_PORT2)
-time.sleep(PACKET_DELAY)
+    send_tcp_syn(DEST_PORT2)
+    time.sleep(PACKET_DELAY)
 
-send_tcp_null(DEST_PORT2)
-time.sleep(PACKET_DELAY)
+    send_tcp_null(DEST_PORT2)
+    time.sleep(PACKET_DELAY)
 
-send_tcp_fin(DEST_PORT2)
-time.sleep(PACKET_DELAY)
+    send_tcp_fin(DEST_PORT2)
+    time.sleep(PACKET_DELAY)
 
-send_udp()
-time.sleep(PACKET_DELAY)
+    send_udp()
+    time.sleep(PACKET_DELAY)
 
-send_custom_payload()
+    send_custom_payload()
 
-print(&quot;\n[+] Experiment Completed.&quot;)
+    print("\n[+] Experiment Completed.")
 
-if __name__ == &quot;__main__&quot;:
-main()
+if __name__ == "__main__":
+    main()
+
 
 4. Execution & Capture  Kali Linux
    1. Start Wireshark, select the interface (e.g., eth0).
