@@ -19,7 +19,10 @@ Phase            System        Steps and Commands
    2. Run the script: sudo python3 packet_lab.py.
 
 5. Observation & Cleanup  Kali/Ubuntu
-   1. Check Wireshark output using filters like icmp, tcp.flags.syn==1, or tcp.port==22.
+   1. Check Wireshark output using filters like icmp, 
+tcp.flags.syn==1 we will see TCP [SYN] Kali-&gt; Unix(port 80).. then no RST, no Syn/Ack. , or 
+tcp.port==22 In wireshark we will see TCP[SYN] kali -&gt; Ubuntu Tcp[Syn, ACk] Ubuntu-&gt; kali
+TCP [ACK] Kali-&gt; Ubuntu.
    2. Test connections manually (optional): ping <Ubuntu-ip>, nc –v <Ubuntu-ip> 80, nc –v <Ubuntu-ip> 22, or ssh ubuntu@<ubuntu-ip>.
    3. Remove the iptables rule: sudo iptables –D INPUT -p icmp --icmp-type echo-request -j DROP.
 
