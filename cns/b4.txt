@@ -10,7 +10,7 @@ Phase              System          Steps and Commands
                                    2. Select the internal network interface.
                                    3. Apply filter: tcp.port==5000.
 
-3. Server Setup    Ubuntu          1. Allow port 5000 in UFW: ufw allow 5000.
+3. Server Setup    Ubuntu          1. Allow port 5000 in UFW: sudo su, ufw allow 5000.
                    (Server)        2. Start the TCP server (listening): nc -lvp 5000.
 
 4. Client          Kali Linux      Connect to the server: nc -v <Ubuntu IP> 5000.
