@@ -8,7 +8,8 @@ Phase              System                Steps and Commands
                                          2. Check VM IP addresses using ifconfig.
 
 2. Enable SSH      Metasploitable2       1. Start SSH service: sudo /etc/init.d/ssh start.
-   Service         (Server)              2. Check listening port: netstat -tlnp
+   Service         (Server)              2. Check listening port: netstat -tlnp | grep 22
+                  You will see below output tcp 0 0 0.0.0.0:22 0.0.0.0:* LISTEN  
 
 3. Capture &       Kali Linux            1. Open Wireshark and select the interface (usually eth0) 
    Connect         (Client)                 to start capturing packets.
@@ -22,9 +23,7 @@ Phase              System                Steps and Commands
 
 5. Analysis        Wireshark             1. Stop the capture.
                                          2. Apply filter: tcp.port==22.
-                                         3. Observe packets showing the TCP 3-way handshake, Client/Server 
-                                            Protocol exchange, Key Exchange Init, Diffie Hellman Group Exchange, 
-                                            and subsequent packets marked as Encrypted Packet.
+                                         3. Observe packets showing the TCP 3-way handshake, Client/Server Protocol exchange, Key Exchange Init, Diffie Hellman Group Exchange,  and subsequent packets marked as Encrypted Packet.
 
 Learning Objective:
 To visualize the initial plaintext negotiation phases of SSH (handshake and key exchange) and to confirm that all subsequent data, including user commands and responses, are successfully encrypted and unreadable by a packet sniffer.
