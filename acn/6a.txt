@@ -1,0 +1,18 @@
+import java.util.*;
+
+class Leaky {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int cap = 4, rate = 3, rem = 0, n = sc.nextInt();
+
+        System.out.println("Clk\tPkt\tAcc\tSent\tRem");
+        for (int i = 1; i <= n; i++) {
+            int p = sc.nextInt();
+            int acc = (rem + p > cap) ? -1 : p;
+            if (acc != -1) rem += p;
+            int sent = Math.min(rem, rate);
+            rem -= sent;
+            System.out.println(i+"\t"+p+"\t"+(acc==-1?"Drop":acc)+"\t"+sent+"\t"+rem);
+        }
+    }
+}
