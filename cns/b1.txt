@@ -29,4 +29,16 @@ Wireshark
 3. Locate the PASS command packet and verify the password.
 4. Observe the server responses, such as 331 (password required) and 230 (login successful).
 
+Observations:
+ Username and password appear in plaintext in
+Wireshark.
+ FTP packets can be filtered using tcp.port==21 or ftp.
+ Server response codes are 331 (password required)
+and 230 (login successful).
+ The login sequence is clearly visible:
+1. USER → ftpuser
+2. Server → 331
+3. PASS → 12345
+4. Server → 230
+
 Learning Objective: To visually demonstrate that FTP transmits authentication credentials (username and password) in clear, unencrypted text, making it vulnerable to packet sniffing.
