@@ -1,0 +1,132 @@
+# PROGRAM 10: P2P PEER (ADD / FILE)
+
+import java.net.*;import java.io.*;import java.nio.file.*;
+class Peer {
+    public static void main(String[] a) throws Exception {
+        new Thread(() -> {
+            try (ServerSocket ss = new ServerSocket(5000)) {
+                while (true) {
+                    Socket s = ss.accept();
+                    var i = new BufferedReader(new InputStreamReader(s.getInputStream()));
+                    var o = new PrintWriter(s.getOutputStream(), true);
+                    String[] m = i.readLine().split(" ");
+                    if (m[0].equals("ADD"))
+                        o.println(Integer.parseInt(m[1]) + Integer.parseInt(m[2]));
+                    else
+                        o.println(Files.readString(Path.of(m[1])));
+                    s.close();
+                }
+            } catch (Exception e) {}
+        }).start();
+
+        if (a.length == 0) return;
+        Socket s = new Socket(a[0], 5000);
+        var o = new PrintWriter(s.getOutputStream(), true);
+        var i = new BufferedReader(new InputStreamReader(s.getInputStream()));
+        o.println(a[1]);
+        System.out.println(i.readLine());
+        s.close();
+    }
+}
+
+---
+
+# PROGRAM 9: ARITHMETIC SERVER (RPC)
+
+import java.net.*;import java.io.*;
+class s {
+    public static void main(String[] a) throws Exception {
+        for (ServerSocket ss = new ServerSocket(5000);;) {
+            try (Socket s = ss.accept()) {
+                var i = new BufferedReader(new InputStreamReader(s.getInputStream()));
+                var o = new PrintWriter(s.getOutputStream(), true);
+                var p = i.readLine().split(" ");
+                int x = Integer.parseInt(p[1]), y = Integer.parseInt(p[2]);
+                try {
+                    o.println(p[0].equals("ADD") ? x+y :
+                              p[0].equals("SUB") ? x-y :
+                              p[0].equals("MUL") ? x*y : x/y);
+                } catch(Exception e){ o.println("ERR"); }
+            }
+        }
+    }
+}
+
+---
+
+# PROGRAM 8: ARITHMETIC CLIENT (RPC)
+
+import java.net.*;import java.io.*;
+class c {
+    public static void main(String[] a) throws Exception {
+        try (Socket s = new Socket("localhost",5000)) {
+            var o = new PrintWriter(s.getOutputStream(), true);
+            var i = new BufferedReader(new InputStreamReader(s.getInputStream()));
+            o.println(new BufferedReader(new InputStreamReader(System.in)).readLine());
+            System.out.println(i.readLine());
+        }
+    }
+}
+
+---
+
+# PROGRAM 7: LEAKY BUCKET (SCANNER INPUT)
+
+import java.util.*;
+class Leaky {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int cap = 4, rate = 3, rem = 0, n = sc.nextInt();
+        System.out.println("Clk\tPkt\tAcc\tSent\tRem");
+        for (int i = 1; i <= n; i++) {
+            int p = sc.nextInt();
+            int acc = (rem + p > cap) ? -1 : p;
+            if (acc != -1) rem += p;
+            int sent = Math.min(rem, rate);
+            rem -= sent;
+            System.out.println(i+"\t"+p+"\t"+(acc==-1?"Drop":acc)+"\t"+sent+"\t"+rem);
+        }
+    }
+}
+
+---
+
+# PROGRAM 6: LEAKY BUCKET (HARDCODED)
+
+class Leak {
+    public static void main(String[] a) {
+        int cap = 4, rate = 3, rem = 0, t = 0;
+        int[] pkt = {4,2,1,0,5};
+        System.out.println("Time\tPkt\tAcc\tSent\tRem");
+        for (int p : pkt) {
+            t++;
+            int acc;
+            if (rem + p > cap) acc = -1;
+            else { acc = p; rem += p; }
+            int sent = Math.min(rem, rate);
+            rem -= sent;
+            System.out.println(t+"\t"+p+"\t"+(acc==-1?"Drop":acc)+"\t"+sent+"\t"+rem);
+        }
+    }
+}
+
+---
+
+# PROGRAM 5: RSA ENCRYPTION / DECRYPTION
+
+import java.security.*;
+import javax.crypto.Cipher;
+import java.util.Base64;
+
+public class rsa {
+    public static void main(String[] a) throws Exception {
+        KeyPair g = KeyPairGenerator.getInstance("RSA").generateKeyPair();
+        Cipher c = Cipher.getInstance("RSA");
+        String m = "Hello, RSA!";
+        c.init(Cipher.ENCRYPT_MODE, g.getPublic());
+        String e = Base64.getEncoder().encodeToString(c.doFinal(m.getBytes()));
+        System.out.println("Enc:"+e);
+        c.init(Cipher.DECRYPT_MODE, g.getPrivate());
+        System.out.println("Dec:"+new String(c.doFinal(Base64.getDecoder().decode(e))));
+    }
+}
