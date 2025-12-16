@@ -1,0 +1,300 @@
+## **1. Quadratic Roots, Array Multiplication, Bubble Sort**
+
+```java
+import java.util.*;
+
+class Ex1 {
+    static void quad(Scanner s){
+        double a=s.nextDouble(),b=s.nextDouble(),c=s.nextDouble(),d=b*b-4*a*c;
+        if(d>0) System.out.printf("Roots: %.2f %.2f\n",(-b+Math.sqrt(d))/(2*a),(-b-Math.sqrt(d))/(2*a));
+        else if(d==0) System.out.printf("Equal Root: %.2f\n",-b/(2*a));
+        else System.out.printf("Roots: %.2f ± %.2fi\n",-b/(2*a),Math.sqrt(-d)/(2*a));
+    }
+    static void mul(Scanner s){
+        int n=s.nextInt();int[]a=new int[n],b=new int[n];
+        for(int i=0;i<n;i++)a[i]=s.nextInt();
+        for(int i=0;i<n;i++)b[i]=s.nextInt();
+        for(int i=0;i<n;i++)System.out.print(a[i]*b[i]+" ");
+        System.out.println();
+    }
+    static void sort(Scanner s){
+        int n=s.nextInt();int[]x=new int[n];
+        for(int i=0;i<n;i++)x[i]=s.nextInt();
+        for(int i=0;i<n;i++)
+            for(int j=0;j<n-i-1;j++)
+                if(x[j]>x[j+1]){int t=x[j];x[j]=x[j+1];x[j+1]=t;}
+        System.out.println("Asc: "+Arrays.toString(x));
+        for(int i=0;i<n/2;i++){int t=x[i];x[i]=x[n-i-1];x[n-i-1]=t;}
+        System.out.println("Desc: "+Arrays.toString(x));
+    }
+    public static void main(String[]a){
+        Scanner s=new Scanner(System.in);
+        for(int c;(c=s.nextInt())!=4;)
+            if(c==1)quad(s); else if(c==2)mul(s); else sort(s);
+    }
+}
+```
+
+---
+
+## **2. Employee Database**
+
+```java
+import java.util.*;
+
+class Employee{
+    String n,d,des; int id,a; double s;
+    Employee(String n,int id,String d,int a,String des,double s){
+        this.n=n;this.id=id;this.d=d;this.a=a;this.des=des;this.s=s;
+    }
+    void show(){System.out.println(n+" "+id+" "+d+" "+a+" "+des+" "+s);}
+}
+
+class EmployeeDatabase{
+    public static void main(String[] args){
+        Scanner sc=new Scanner(System.in);
+        ArrayList<Employee> e=new ArrayList<>();
+        for(int i=0;i<5;i++)
+            e.add(new Employee(sc.next(),sc.nextInt(),sc.next(),sc.nextInt(),sc.next(),sc.nextDouble()));
+        double sum=0; Employee best=null;
+        for(Employee x:e){
+            x.show();
+            if(x.d.equalsIgnoreCase("sales")) sum+=x.s;
+            if(x.d.equalsIgnoreCase("purchase")&&x.des.equalsIgnoreCase("manager")
+                    &&(best==null||x.s>best.s)) best=x;
+        }
+        System.out.println("Sales Salary: "+sum);
+        if(best!=null) best.show();
+    }
+}
+```
+
+---
+
+## **3. Complex Numbers**
+
+```java
+class Complex{
+    double r,i;
+    Complex(double r,double i){this.r=r;this.i=i;}
+    Complex add(Complex c){return new Complex(r+c.r,i+c.i);}
+    Complex sub(Complex c){return new Complex(r-c.r,i-c.i);}
+    boolean eq(Complex c){return r==c.r&&i==c.i;}
+    void show(){System.out.println(r+(i>=0?" + ":" - ")+Math.abs(i)+"i");}
+}
+
+class ComplexDemo{
+    public static void main(String[]a){
+        Complex c1=new Complex(2,3),c2=new Complex(1,4);
+        c1.add(c2).show();
+        c1.sub(c2).show();
+        System.out.println(c1.eq(c2));
+    }
+}
+```
+
+---
+
+## **4. Inheritance (Person–Student–Employee)**
+
+```java
+class Person{String n,g;int a;Person(String n,int a,String g){this.n=n;this.a=a;this.g=g;}}
+class Student extends Person{String c;int r;Student(String n,int a,String g,String c,int r){super(n,a,g);this.c=c;this.r=r;}}
+class Employee extends Person{String d;int i;Employee(String n,int a,String g,String d,int i){super(n,a,g);this.d=d;this.i=i;}}
+
+class InheritanceDemo{
+    public static void main(String[]a){
+        Student[] s={new Student("A",20,"M","CSE",1),new Student("B",21,"F","ECE",2)};
+        Employee[] e={new Employee("X",30,"M","IT",10),new Employee("Y",28,"F","HR",11)};
+        for(Student x:s) System.out.println(x.n+" "+x.c+" "+x.r);
+        for(Employee x:e) System.out.println(x.n+" "+x.d+" "+x.i);
+    }
+}
+```
+
+---
+
+## **5. Method Overloading (String Compare)**
+
+```java
+class StringComparator{
+    static int usrstrcmp(String a,String b){
+        int n=Math.min(a.length(),b.length());
+        for(int i=0;i<n;i++) if(a.charAt(i)!=b.charAt(i)) return a.charAt(i)-b.charAt(i);
+        return a.length()-b.length();
+    }
+    static int usrstrcmp(String a,String b,int n){
+        for(int i=0;i<n&&i<a.length()&&i<b.length();i++)
+            if(a.charAt(i)!=b.charAt(i)) return a.charAt(i)-b.charAt(i);
+        return 0;
+    }
+    public static void main(String[]a){
+        System.out.println(usrstrcmp("Hello","Help"));
+        System.out.println(usrstrcmp("Hello","Help",3));
+    }
+}
+```
+
+---
+
+## **6. Abstract Class – Bank**
+
+```java
+abstract class Bank{
+    double b;
+    Bank(double b){this.b=b;}
+    abstract double interest();
+}
+class CityBank extends Bank{CityBank(double b){super(b);}double interest(){return b*0.05;}}
+class SBIBank extends Bank{SBIBank(double b){super(b);}double interest(){return b*0.065;}}
+class CanaraBank extends Bank{CanaraBank(double b){super(b);}double interest(){return b*0.07;}}
+
+class BankSystem{
+    public static void main(String[]a){
+        Bank[] b={new CityBank(1000),new SBIBank(1000),new CanaraBank(1000)};
+        for(Bank x:b) System.out.println(x.interest());
+    }
+}
+```
+
+---
+
+## **7. Producer–Consumer**
+
+```java
+class Shared{
+    int x; boolean f=false;
+    synchronized void put(int n)throws Exception{while(f)wait();x=n;f=true;notify();}
+    synchronized void get()throws Exception{while(!f)wait();System.out.println(x);f=false;notify();}
+}
+
+class ProducerConsumerDemo{
+    public static void main(String[]a){
+        Shared s=new Shared();
+        new Thread(()->{try{for(int i=1;i<=5;i++)s.put(i);}catch(Exception e){}}).start();
+        new Thread(()->{try{for(int i=1;i<=5;i++)s.get();}catch(Exception e){}}).start();
+    }
+}
+```
+
+---
+
+## **8. Exception Handling**
+
+```java
+import java.util.*;
+class DivisionOperation{
+    public static void main(String[]a){
+        Scanner s=new Scanner(System.in);
+        try{
+            int x=s.nextInt(),y=s.nextInt();
+            if(x<0||y<0) throw new Exception();
+            System.out.println(x/y);
+        }catch(ArithmeticException e){System.out.println("Divide by zero");}
+        catch(Exception e){System.out.println("Negative input");}
+    }
+}
+```
+
+---
+
+## **9. Interface – Conversion**
+
+```java
+interface Compute{double convert();}
+class GB implements Compute{double g;GB(double g){this.g=g;}public double convert(){return g*1024*1024*1024;}}
+class Euro implements Compute{double e;Euro(double e){this.e=e;}public double convert(){return e*90;}}
+
+class ConversionDemo{
+    public static void main(String[]a){
+        Compute c1=new GB(2),c2=new Euro(10);
+        System.out.println(c1.convert());
+        System.out.println(c2.convert());
+    }
+}
+```
+
+---
+
+## **10. JDBC CRUD (Shortest Exam-Safe)**
+
+```java
+import java.sql.*;import java.util.*;
+class JDBCDemo{
+    public static void main(String[]a)throws Exception{
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        Connection c=DriverManager.getConnection("jdbc:mysql://localhost/labdb","root","password");
+        Scanner s=new Scanner(System.in);
+        PreparedStatement p=c.prepareStatement("insert into students values(?,?,?)");
+        p.setInt(1,1);p.setString(2,"A");p.setInt(3,20);p.execute();
+        ResultSet r=c.createStatement().executeQuery("select * from students");
+        while(r.next()) System.out.println(r.getInt(1)+" "+r.getString(2));
+        c.close();
+    }
+}
+```
+
+---
+
+## **11. Servlet (Age Check)**
+
+**index.html**
+
+```html
+<form action="ValidateServlet" method="post">
+Name:<input name="name"> Age:<input name="age">
+<input type="submit">
+</form>
+```
+
+**ValidateServlet.java**
+
+```java
+@WebServlet("/ValidateServlet")
+public class ValidateServlet extends HttpServlet{
+    protected void doPost(HttpServletRequest r,HttpServletResponse p)throws IOException{
+        int a=Integer.parseInt(r.getParameter("age"));
+        String n=r.getParameter("name");
+        p.getWriter().print(a<18?"Hello "+n+", not authorized":"Welcome to this site");
+    }
+}
+```
+
+---
+
+## **12. JSP Session Tracking**
+
+**index.jsp**
+
+```jsp
+<form action="welcome.jsp">
+<input name="name"><input type="submit">
+</form>
+```
+
+**welcome.jsp**
+
+```jsp
+<%@page import="java.util.*"%>
+<%
+session.setAttribute("n",request.getParameter("name"));
+session.setAttribute("t",System.currentTimeMillis());
+%>
+<div style="float:right"><%=new Date((Long)session.getAttribute("t"))%></div>
+Hello <%=session.getAttribute("n")%>
+<form action="logout.jsp"><input type="submit" value="Logout"></form>
+```
+
+**logout.jsp**
+
+```jsp
+<%
+long d=(System.currentTimeMillis()-(Long)session.getAttribute("t"))/1000;
+String n=(String)session.getAttribute("n");
+session.invalidate();
+%>
+Thank You <%=n%><br>Duration: <%=d%> seconds
+```
+
+---
+
