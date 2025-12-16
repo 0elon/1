@@ -1,0 +1,774 @@
+1.  Write a java program:
+a. To calculate and display the roots of Quadratic Equation.
+b. To multiply two arrays and display the result.
+c. To sort the elements in ascending and descending order using bubble sort algorithm.
+
+import java.util.*;
+
+class Ex1 {
+
+    static void quadratic(Scanner sc) {
+        double a = sc.nextDouble();
+        double b = sc.nextDouble();
+        double c = sc.nextDouble();
+
+        double d = b * b - 4 * a * c;
+
+        if (d > 0)
+            System.out.printf("Roots: %.4f %.4f\n",
+                    (-b + Math.sqrt(d)) / (2 * a),
+                    (-b - Math.sqrt(d)) / (2 * a));
+        else if (d == 0)
+            System.out.printf("Equal Roots: %.4f\n", -b / (2 * a));
+        else {
+            double r = -b / (2 * a);
+            double i = Math.sqrt(-d) / (2 * a);
+            System.out.printf("Roots: %.4f ± %.4fi\n", r, i);
+        }
+    }
+
+    static void multiplyArrays(Scanner sc) {
+        int n = sc.nextInt();
+        int[] a = new int[n];
+        int[] b = new int[n];
+        int[] r = new int[n];
+
+        for (int i = 0; i < n; i++)
+            a[i] = sc.nextInt();
+        for (int i = 0; i < n; i++)
+            b[i] = sc.nextInt();
+        for (int i = 0; i < n; i++)
+            r[i] = a[i] * b[i];
+
+        System.out.println("Result: " + Arrays.toString(r));
+    }
+
+    static void bubbleSort(int[] x, boolean asc) {
+        for (int i = 0; i < x.length - 1; i++)
+            for (int j = 0; j < x.length - i - 1; j++)
+                if ((asc && x[j] > x[j + 1]) || (!asc && x[j] < x[j + 1])) {
+                    int t = x[j];
+                    x[j] = x[j + 1];
+                    x[j + 1] = t;
+                }
+    }
+
+    static void sortArray(Scanner sc) {
+        int n = sc.nextInt();
+        int[] a = new int[n];
+        int[] b;
+
+        for (int i = 0; i < n; i++)
+            a[i] = sc.nextInt();
+
+        b = a.clone();
+
+        bubbleSort(a, true);
+        bubbleSort(b, false);
+
+        System.out.println("Ascending Order : " + Arrays.toString(a));
+        System.out.println("Descending Order: " + Arrays.toString(b));
+    }
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        int ch;
+
+        while ((ch = sc.nextInt()) != 4) {
+            if (ch == 1) quadratic(sc);
+            else if (ch == 2) multiplyArrays(sc);
+            else if (ch == 3) sortArray(sc);
+        }
+        sc.close();
+    }
+}
+2. Write a java program to create an Employee database which stores following information about the
+Employee: Name, Emp_id, department, age, and designation. Perform the following operations:
+a. Read and display the details of at least five Employees.
+b. Calculate and display the sum of salary of all the employees of “sales” department.
+c. Retrieve the details of “highest paid manager” in the purchase department.
+
+
+import java.util.*;
+
+class Employee {
+    String name, dept, des;
+    int id, age;
+    double salary;
+
+    Employee(String name, int id, String dept, int age, String des, double salary) {
+        this.name = name;
+        this.id = id;
+        this.dept = dept;
+        this.age = age;
+        this.des = des;
+        this.salary = salary;
+    }
+
+    void display() {
+        System.out.println(name + " | " + id + " | " + dept + " | " +
+                           age + " | " + des + " | $" + salary);
+    }
+}
+
+public class EmployeeDatabase {
+
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        ArrayList<Employee> list = new ArrayList<>();
+
+        int n = sc.nextInt();
+        sc.nextLine();
+
+        for (int i = 0; i < n; i++) {
+            String name = sc.nextLine();
+            int id = sc.nextInt(); sc.nextLine();
+            String dept = sc.nextLine();
+            int age = sc.nextInt(); sc.nextLine();
+            String des = sc.nextLine();
+            double salary = sc.nextDouble(); sc.nextLine();
+
+            list.add(new Employee(name, id, dept, age, des, salary));
+        }
+
+        System.out.println("\nEmployee Details:");
+        for (Employee e : list)
+            e.display();
+
+        double salesTotal = 0;
+        for (Employee e : list)
+            if (e.dept.equalsIgnoreCase("sales"))
+                salesTotal += e.salary;
+
+        System.out.println("\nTotal Salary of Sales Department: $" + salesTotal);
+
+        Employee highest = null;
+        for (Employee e : list)
+            if (e.dept.equalsIgnoreCase("purchase") &&
+                e.desig.equalsIgnoreCase("manager"))
+                if (highest == null || e.salary > highest.salary)
+                    highest = e;
+
+        System.out.println("\nHighest Paid Manager in Purchase Department:");
+        if (highest != null) highest.display();
+        else System.out.println("No employee found.");
+
+        sc.close();
+    }
+}
+
+
+3.Write a Java program using encapsulation and constructors to create a class to represent a complex
+number and perform the following operations:
+a. Addition of two complex numbers
+b. Subtraction of two complex numbers
+c. Compare two complex numbers.
+
+
+import java.util.*;
+
+class Complex {
+    double r, i;
+
+    Complex(double r, double i) {
+        this.r = r;
+        this.i = i;
+    }
+
+    Complex add(Complex c) {
+        return new Complex(r + c.r, i + c.i);
+    }
+
+    Complex sub(Complex c) {
+        return new Complex(r - c.r, i - c.i);
+    }
+
+    boolean equal(Complex c) {
+        return r == c.r && i == c.i;
+    }
+
+    void display() {
+        if (i >= 0)
+            System.out.println(r + " + " + i + "i");
+        else
+            System.out.println(r + " - " + (-i) + "i");
+    }
+}
+
+public class ComplexDemo {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        double r1 = sc.nextDouble();
+        double i1 = sc.nextDouble();
+        double r2 = sc.nextDouble();
+        double i2 = sc.nextDouble();
+
+        Complex c1 = new Complex(r1, i1);
+        Complex c2 = new Complex(r2, i2);
+
+        System.out.print("Complex Number 1: ");
+        c1.display();
+        System.out.print("Complex Number 2: ");
+        c2.display();
+
+        Complex sum = c1.add(c2);
+        System.out.print("Sum: ");
+        sum.display();
+
+        Complex diff = c1.sub(c2);
+        System.out.print("Difference: ");
+        diff.display();
+
+        if (c1.equal(c2))
+            System.out.println("Both Complex Numbers are Equal");
+        else
+            System.out.println("Complex Numbers are Not Equal");
+
+        sc.close();
+    }
+}
+
+4.Write a java program to define a base class called person which stores information about a person
+such as name, age, gender. Derive two new classes employee and student and extend the base class
+methods in derived class to read and display the details that are specific to student and employee.
+Display the details of at least five students and five employees.
+
+
+class Person {
+    String name;
+    int age;
+    String gender;
+
+    Person(String name, int age, String gender) {
+        this.name = name;
+        this.age = age;
+        this.gender = gender;
+    }
+}
+
+class Student extends Person {
+    String course;
+    int rollNo;
+
+    Student(String name, int age, String gender, String course, int rollNo) {
+        super(name, age, gender);
+        this.course = course;
+        this.rollNo = rollNo;
+    }
+}
+
+class Employee extends Person {
+    String department;
+    int empId;
+
+    Employee(String name, int age, String gender, String department, int empId) {
+        super(name, age, gender);
+        this.department = department;
+        this.empId = empId;
+    }
+}
+
+public class InheritanceDemo {
+    public static void main(String[] args) {
+
+        Student[] students = {
+            new Student("Ravi", 20, "Male", "CSE", 101),
+            new Student("Priya", 21, "Female", "ECE", 102),
+            new Student("Arjun", 22, "Male", "EEE", 103),
+            new Student("Neha", 20, "Female", "ME", 104),
+            new Student("Kiran", 23, "Male", "IT", 105)
+        };
+
+        Employee[] employees = {
+            new Employee("Suresh", 30, "Male", "HR", 201),
+            new Employee("Meena", 28, "Female", "Finance", 202),
+            new Employee("Rohan", 35, "Male", "IT", 203),
+            new Employee("Asha", 32, "Female", "Admin", 204),
+            new Employee("Vikram", 40, "Male", "Marketing", 205)
+        };
+
+        System.out.println("=== STUDENT DETAILS ===");
+        for (Student s : students)
+            System.out.println(s.name + " | " + s.age + " | " + s.gender +
+                               " | " + s.course + " | " + s.rollNo);
+
+        System.out.println("\n=== EMPLOYEE DETAILS ===");
+        for (Employee e : employees)
+            System.out.println(e.name + " | " + e.age + " | " + e.gender +
+                               " | " + e.department + " | " + e.empId);
+    }
+}
+
+5. 
+
+class StringComparator {
+
+    static int usrstrcmp(String s1, String s2) {
+        int n = Math.min(s1.length(), s2.length());
+        for (int i = 0; i < n; i++)
+            if (s1.charAt(i) != s2.charAt(i))
+                return s1.charAt(i) - s2.charAt(i);
+        return s1.length() - s2.length();
+    }
+
+    static int usrstrcmp(String s1, String s2, int n) {
+        int len = Math.min(n, Math.min(s1.length(), s2.length()));
+        for (int i = 0; i < len; i++)
+            if (s1.charAt(i) != s2.charAt(i))
+                return s1.charAt(i) - s2.charAt(i);
+        return 0;
+    }
+
+    public static void main(String[] args) {
+        String a = "HelloJava", b = "HelloJawa";
+
+        System.out.println(usrstrcmp(a, b));
+        System.out.println(usrstrcmp(a, b, 5));
+    }
+}
+
+		PART B
+6.
+
+import java.util.*;
+
+abstract class Bank {
+    String name;
+    int accNo;
+    double balance;
+
+    void read(Scanner sc) {
+        System.out.print("Enter Customer Name: ");
+        name = sc.next();
+        System.out.print("Enter Account Number: ");
+        accNo = sc.nextInt();
+        System.out.print("Enter Balance: ");
+        balance = sc.nextDouble();
+    }
+
+    void display() {
+        System.out.print("Name: " + name +
+                         " | Account No: " + accNo +
+                         " | Balance: $" + balance);
+    }
+
+    abstract void calculateInterest();
+}
+
+class CityBank extends Bank {
+    void calculateInterest() {
+        System.out.println(" | Interest: $" + (balance * 0.05));
+    }
+}
+
+class SBIBank extends Bank {
+    void calculateInterest() {
+        System.out.println(" | Interest: $" + (balance * 0.065));
+    }
+}
+
+class CanaraBank extends Bank {
+    void calculateInterest() {
+        System.out.println(" | Interest: $" + (balance * 0.07));
+    }
+}
+
+public class BankSystem {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        Bank[] banks = {
+            new CityBank(),
+            new SBIBank(),
+            new CanaraBank()
+        };
+
+        String[] bankNames = { "City Bank", "SBI Bank", "Canara Bank" };
+
+        for (int i = 0; i < banks.length; i++) {
+            System.out.println("\n--- " + bankNames[i] + " ---");
+            banks[i].read(sc);
+        }
+
+        System.out.println("\n=== Interest Details ===");
+        for (int i = 0; i < banks.length; i++) {
+            System.out.print(bankNames[i] + " -> ");
+            banks[i].display();
+            banks[i].calculateInterest();
+        }
+
+        sc.close();
+    }
+}
+
+7.
+class Shared {
+    int item;
+    boolean available = false;
+
+    synchronized void produce(int n) throws InterruptedException {
+        while (available)
+            wait();
+        item = n;
+        System.out.println("Produced: " + item);
+        available = true;
+        notifyAll();
+    }
+
+    synchronized void consume() throws InterruptedException {
+        while (!available)
+            wait();
+        System.out.println("Consumed: " + item);
+        available = false;
+        notifyAll();
+    }
+}
+
+class ProducerConsumerDemo {
+    public static void main(String[] args) {
+
+        Shared s = new Shared();
+
+        Thread producer = new Thread(() -> {
+            try {
+                for (int i = 1; i <= 5; i++) {
+                    s.produce(i);
+                    Thread.sleep(500);
+                }
+            } catch (InterruptedException e) { }
+        });
+
+        Thread consumer = new Thread(() -> {
+            try {
+                for (int i = 1; i <= 5; i++) {
+                    s.consume();
+                    Thread.sleep(500);
+                }
+            } catch (InterruptedException e) { }
+        });
+
+        producer.start();
+        consumer.start();
+    }
+}
+
+8.
+import java.util.*;
+
+public class DivisionOperation {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+        try {
+            System.out.print("Enter Numerator: ");
+            int num = sc.nextInt();
+
+            System.out.print("Enter Denominator: ");
+            int den = sc.nextInt();
+
+            if (num < 0 || den < 0)
+                throw new IllegalArgumentException("Negative number input!");
+
+            int result = num / den;   // may throw ArithmeticException
+            System.out.println("Result: " + result);
+
+        } catch (ArithmeticException e) {
+            System.out.println("Error: Divide by zero exception!");
+        } catch (InputMismatchException e) {
+            System.out.println("Error: Invalid input type!");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Error: " + e.getMessage());
+        } finally {
+            sc.close();
+        }
+    }
+}
+
+9.
+interface Compute {
+    double convert();
+}
+
+class GigaBytesToBytes implements Compute {
+    double gb;
+
+    GigaBytesToBytes(double gb) {
+        this.gb = gb;
+    }
+
+    public double convert() {
+        return gb * 1024 * 1024 * 1024;
+    }
+}
+
+class EuroToRupees implements Compute {
+    double euro;
+
+    EuroToRupees(double euro) {
+        this.euro = euro;
+    }
+
+    public double convert() {
+        return euro * 90;   // fixed conversion rate
+    }
+}
+
+public class ConversionDemo {
+    public static void main(String[] args) {
+
+        Compute c1 = new GigaBytesToBytes(2.5);
+        System.out.println("2.5 GB = " + (long) c1.convert() + " Bytes");
+
+        Compute c2 = new EuroToRupees(500);
+        System.out.println("500 Euro = " + c2.convert() + " Rupees");
+    }
+}
+
+10.Write a java program that connects to a database using JDBC and demonstrate CRUD operations.
+Prerequisites:
+Java Development Kit (JDK) installed.
+MySQL Database installed.
+MySQL JDBC Driver JAR file (e.g., mysql-connector-java-8.x.jar) added to the CLASSPATH.
+Procedure:
+Database Setup: Open your MySQL command line or workbench and create a database named labdb.
+Command: CREATE DATABASE labdb;
+Project Setup: Create a new Java Class named JdbcDemo.
+Library Configuration: Ensure the MySQL JDBC connector jar is in your project build path.
+Coding: Write the code to register the driver, open a connection, and execute SQL statements for Insert, Select, Update, and Delete.
+Source Code (JdbcDemo.java):
+import java.sql.*;
+import java.util.*;
+
+public class JDBCDemo {
+    static final String URL="jdbc:mysql://localhost:3306/labdb";
+    static final String USER="root";
+    static final String PASS="password"; // change
+
+    public static void main(String[] args) {
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con=DriverManager.getConnection(URL,USER,PASS);
+            Scanner sc=new Scanner(System.in);
+
+            while(true){
+                System.out.println("1.Insert 2.Read 3.Update 4.Delete 5.Exit");
+                int ch=sc.nextInt();
+
+                if(ch==1){
+                    PreparedStatement p=con.prepareStatement("INSERT INTO students VALUES(?,?,?)");
+                    p.setInt(1,sc.nextInt());
+                    p.setString(2,sc.next());
+                    p.setInt(3,sc.nextInt());
+                    p.executeUpdate();
+                    System.out.println("Inserted");
+                }
+                else if(ch==2){
+                    ResultSet r=con.createStatement().executeQuery("SELECT * FROM students");
+                    while(r.next())
+                        System.out.println(r.getInt(1)+" "+r.getString(2)+" "+r.getInt(3));
+                }
+                else if(ch==3){
+                    PreparedStatement p=con.prepareStatement("UPDATE students SET name=?,age=? WHERE id=?");
+                    p.setString(1,sc.next());
+                    p.setInt(2,sc.nextInt());
+                    p.setInt(3,sc.nextInt());
+                    p.executeUpdate();
+                    System.out.println("Updated");
+                }
+                else if(ch==4){
+                    PreparedStatement p=con.prepareStatement("DELETE FROM students WHERE id=?");
+                    p.setInt(1,sc.nextInt());
+                    p.executeUpdate();
+                    System.out.println("Deleted");
+                }
+                else break;
+            }
+            con.close(); sc.close();
+        } catch(Exception e){ System.out.println(e); }
+    }
+}
+
+11. Write a Java Servlet program that takes name and age from an HTML page. If the age is less than 18, check authorization; otherwise, welcome the user.
+Prerequisites:
+Apache Tomcat Server installed.
+IDE (Eclipse/NetBeans/IntelliJ) configured for Web Development.
+Procedure:
+Create Web Project: Create a new "Dynamic Web Project" in your IDE.
+HTML Page: Create an index.html file with a form accepting Name and Age. Set the form action to ValidateServlet.
+Servlet Creation: Create a Java Servlet named ValidateServlet.
+Logic Implementation: inside the doGet or doPost method, retrieve parameters. Parse age to an integer and use an if-else condition to print the response.
+Deployment: Run the project on the Tomcat Server.
+Source Code:
+File 1: index.html
+<!DOCTYPE html>
+<html>
+<body>
+<form action="ValidateServlet" method="post">
+Name: <input type="text" name="name"><br>
+Age: <input type="number" name="age"><br>
+<input type="submit" value="Submit">
+</form>
+</body>
+</html>
+
+File 2: ValidateServlet.java
+import java.io.*;
+import javax.servlet.*;
+import javax.servlet.http.*;
+import javax.servlet.annotation.WebServlet;
+
+@WebServlet("/ValidateServlet")
+public class ValidateServlet extends HttpServlet {
+    protected void doPost(HttpServletRequest req, HttpServletResponse res)
+            throws ServletException, IOException {
+
+        res.setContentType("text/html");
+        PrintWriter out = res.getWriter();
+
+        String name = req.getParameter("name");
+        int age = Integer.parseInt(req.getParameter("age"));
+
+        if (age < 18)
+            out.println("Hello " + name + ", you are not authorized to visit the site");
+        else
+            out.println("Welcome to this site");
+    }
+}
+
+12. Write a JSP program to track user session duration. Accept name, display start time, and on logout, display the duration of usage.
+Prerequisites:
+Apache Tomcat Server.
+Procedure:
+Create Web Project: Create a new Web Application.
+Input Page: Create index.jsp to take the user's name.
+Welcome Page: Create welcome.jsp.
+Capture the name and current time.
+Store them in the session object.
+Display the start time.
+Provide a link/button to logout.jsp.
+Logout Page: Create logout.jsp.
+Retrieve the start time from the session.
+Calculate CurrentTime - StartTime.
+Invalidate the session and print the duration.
+Source Code:
+File 1: index.jsp
+Java
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head><title>Login</title></head>
+<body>
+    <h2>Login Page</h2>
+    <form action="welcome.jsp" method="post">
+        Enter Name: <input type="text" name="username">
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>
+
+<html>
+<body>
+<form action="welcome.jsp" method="post">
+Name: <input type="text" name="name">
+<input type="submit" value="Submit">
+</form>
+</body>
+</html>
+
+
+
+File 2: welcome.jsp
+Java
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page import="java.util.Date" %>
+<!DOCTYPE html>
+<html>
+<head><title>Welcome</title></head>
+<body>
+    <%
+        String name = request.getParameter("username");
+        // Check if session is new or name is null to prevent errors on refresh
+        if(name != null) {
+            session.setAttribute("user", name);
+            // Store start time in milliseconds
+            session.setAttribute("startTime", System.currentTimeMillis());
+        }
+    %>
+    
+    <div style="text-align: right; color: blue;">
+        Start Time: <%= new Date((Long)session.getAttribute("startTime")) %>
+    </div>
+
+    <h1>Hello <%= session.getAttribute("user") %></h1>
+    
+    <br><br>
+    <form action="logout.jsp" method="post">
+        <input type="submit" value="Logout">
+    </form>
+</body>
+</html>
+
+<%@ page import="java.util.*" %>
+<html>
+<body>
+<%
+String name=request.getParameter("name");
+if(name!=null){
+    session.setAttribute("name",name);
+    session.setAttribute("start",System.currentTimeMillis());
+}
+%>
+
+<div style="position:absolute;top:10px;right:10px;">
+Start Time: <%= new Date((Long)session.getAttribute("start")) %>
+</div>
+
+<h2>Hello <%= session.getAttribute("name") %></h2>
+
+<form action="logout.jsp" method="post">
+<input type="submit" value="Logout">
+</form>
+</body>
+</html>
+
+
+
+File 3: logout.jsp
+Java
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head><title>Logout</title></head>
+<body>
+    <%
+        String name = (String)session.getAttribute("user");
+        Long startTime = (Long)session.getAttribute("startTime");
+        long duration = 0;
+        
+        if (startTime != null) {
+            long endTime = System.currentTimeMillis();
+            duration = (endTime - startTime) / 1000; // Convert to seconds
+        }
+        
+        // Invalidate session after retrieving data
+        session.invalidate(); 
+    %>
+
+    <h1>Thank You <%= name %></h1>
+    <h3>Duration of usage: <%= duration %> seconds.</h3>
+</body>
+</html>
+
+<html>
+<body>
+<%
+String name=(String)session.getAttribute("name");
+long start=(Long)session.getAttribute("start");
+long time=(System.currentTimeMillis()-start)/1000;
+session.invalidate();
+%>
+
+<h2>Thank You <%= name %></h2>
+<h3>Duration of usage: <%= time %> seconds</h3>
+</body>
+</html>
