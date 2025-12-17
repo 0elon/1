@@ -530,11 +530,12 @@ Java Development Kit (JDK) installed.
 MySQL Database installed.
 MySQL JDBC Driver JAR file (e.g., mysql-connector-java-8.x.jar) added to the CLASSPATH.
 Procedure:
-Database Setup: Open your MySQL command line or workbench and create a database named labdb.
-Command: CREATE DATABASE labdb;
-Project Setup: Create a new Java Class named JdbcDemo.
-Library Configuration: Ensure the MySQL JDBC connector jar is in your project build path.
-Coding: Write the code to register the driver, open a connection, and execute SQL statements for Insert, Select, Update, and Delete.
+
+i) Xampp -> start apache & mysql -> apache admin -> php myadmin -> databases -> create db demo -> create table students,3 [(id,int,10),(name,VARCHAR,50),(age,int,10)]
+ii) Sclipse -> new java Project -> JDBCD -> Finish
+JDBCD-> Configure Build Path -> lib ->module path -> add ext jar(desktop)->mysql connector9.5->apply and close
+JDBCD->src->JDBCDCRUD.java
+
 Source Code (JdbcDemo.java):
 import java.sql.*;
 import java.util.*;
