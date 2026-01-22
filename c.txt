@@ -1,0 +1,316 @@
+public class a1 {
+    public static void main(String[] args) {
+        String t = "Hello World", e = "", d = "";        int s = 3;
+
+        for (char c : t.toCharArray()) {
+            if (Character.isLetter(c)) {
+                char b = Character.isUpperCase(c) ? 'A' : 'a';
+                enc += (char) ((c - b + s) % 26 + b);
+            } else e += c;
+        }
+
+        for (char c : enc.toCharArray()) {
+            if (Character.isLetter(c)) {
+                char b = Character.isUpperCase(c) ? 'A' : 'a';
+                d += (char) ((c - b + (26 - s)) % 26 + b);
+            } else d += c;
+        }
+      
+        System.out.println("Enc: " + e);        System.out.println("Dec: " + d);
+    }
+}
+
+public class a2 {
+    public static void main(String[] args) {
+        String key = "MONARCHY";        String S = "INSTRUMENTS";        String t = "", r = "";
+
+        key = (key + "ABCDEFGHIJKLMNOPQRSTUVWXYZ").replace('J','I');
+        for (char c : key.toCharArray()) {
+            if (t.indexOf(c) < 0) t += c;
+        }
+
+        for (int i = 0; i < S.length(); i += 2) {
+            char A = S.charAt(i);
+            char B = (i+1 < S.length() ? S.charAt(i+1) : 'X');
+            if (A == B) B = 'X';
+
+            int x = t.indexOf(A), y = t.indexOf(B);
+            int r1 = x/5, c1 = x%5, r2 = y/5, c2 = y%5;
+
+            if (r1 == r2) {
+                r += "" + t.charAt(r1*5 + (c1+1)%5) + t.charAt(r2*5 + (c2+1)%5);
+            } else if (c1 == c2) {
+                r += "" + t.charAt(((r1+1)%5)*5 + c1) + t.charAt(((r2+1)%5)*5 + c2);
+            } else {
+                r += "" + t.charAt(r1*5 + c2) + t.charAt(r2*5 + c1);
+            }
+        }
+
+        System.out.println("Ciphertext: " + r);
+    }
+}
+
+import javax.crypto.*;
+import javax.crypto.spec.*;
+import java.security.*;
+import java.util.*;
+
+public class a3 {
+    public static void main(String[] a) throws Exception {
+        String p = "password";         String s = "Hello World";
+
+        Cipher c = Cipher.getInstance("DES/CBC/PKCS5Padding");
+        byte[] iv = new byte[8];
+        new SecureRandom().nextBytes(iv);
+
+        // Generate DES key (first 8 bytes of password)
+        SecretKey k = SecretKeyFactory.getInstance("DES")
+                .generateSecret(new DESKeySpec(Arrays.copyOf(p.getBytes(), 8)));
+
+        c.init(Cipher.ENCRYPT_MODE, k, new IvParameterSpec(iv));
+        String e = Base64.getEncoder().encodeToString(c.doFinal(s.getBytes()));
+
+        c.init(Cipher.DECRYPT_MODE, k, new IvParameterSpec(iv));
+        String d = new String(c.doFinal(Base64.getDecoder().decode(e)));
+
+        System.out.println("Enc: " + e);        System.out.println("IV: " + Base64.getEncoder().encodeToString(iv));        System.out.println("Dec: " + d);
+    }
+}
+
+import javax.crypto.*;
+import javax.crypto.spec.SecretKeySpec;
+import java.util.*;
+
+public class a4 {
+    public static void main(String[] a) throws Exception {
+        String k = "mysecretkey12345";   /* 16 chars = 128-bit key*/        String m = "Hello AES Hardcoded!";
+
+        SecretKeySpec key = new SecretKeySpec(k.getBytes(), "AES");
+        Cipher c = Cipher.getInstance("AES");
+
+        c.init(Cipher.ENCRYPT_MODE, key);
+        String e = Base64.getEncoder().encodeToString(c.doFinal(m.getBytes()));
+        System.out.println("Enc: " + e);
+
+        c.init(Cipher.DECRYPT_MODE, key);
+        String d = new String(c.doFinal(Base64.getDecoder().decode(e)));
+        System.out.println("Dec: " + d);
+    }
+}
+
+import java.security.*;
+import javax.crypto.Cipher;
+import java.util.Base64;
+
+public class a5 {
+    public static void main(String[] a) throws Exception {
+        KeyPairGenerator g = KeyPairGenerator.getInstance("RSA");
+        g.initialize(2048);
+        KeyPair k = g.generateKeyPair();
+
+        String m = "Hello, RSA!";
+
+        Cipher c = Cipher.getInstance("RSA");
+        c.init(Cipher.ENCRYPT_MODE, k.getPublic());
+        String e = Base64.getEncoder().encodeToString(c.doFinal(m.getBytes()));
+        System.out.println("Enc: " + e);
+
+        c.init(Cipher.DECRYPT_MODE, k.getPrivate());
+        String d = new String(c.doFinal(Base64.getDecoder().decode(e)));
+        System.out.println("Dec: " + d);
+    }
+}
+
+A. Setup FTP Server      Ubuntu VM
+
+1. Install FTP server: sudo apt-get install vsftpd.
+2. Start FTP service: sudo systemctl start vsftpd.
+3. Enable service on boot: sudo systemctl enable vsftpd.
+4. (If needed) Allow port 21: Sudo ufw allow 21/tcp.
+5. Create a test user: sudo adduser ftpuser (password: 12345).
+
+B & C. Capture & Login   Kali Linux (Client)
+
+1. Start Wireshark and select the network interface (e.g., eth0).
+2. Start packet capture.
+3. Open a terminal and connect: ftp <ubuntu-ip> (e.g., ftp 192.168.56.105).
+4. Enter username: ftpuser.
+5. Enter password: 12345.
+6. Optionally execute commands (e.g., ls, pwd).
+7. Exit FTP: bye.
+8. Stop the Wireshark capture.
+
+D. Analyze Packets
+
+Wireshark
+
+1. Apply display filter: ftp (or tcp.port==21).
+2. Locate the USER command packet and verify the username.
+3. Locate the PASS command packet and verify the password.
+4. Observe the server responses, such as 331 (password required) and 230 (login successful).
+
+Observations:
+Username and password appear in plaintext in
+Wireshark.
+FTP packets can be filtered using tcp.port==21 or ftp.
+Server response codes are 331 (password required)
+and 230 (login successful).
+The login sequence is clearly visible:
+1. USER → ftpuser
+2. Server → 331
+3. PASS → 12345
+4. Server → 230
+
+1. Network Setup  Kali/Ubuntu  Check the IP addresses using the ifconfig command.
+
+2. Configure Firewall  Ubuntu (Target)
+   1. Enable UFW: sudo ufw enable.
+   2. Add rules: sudo ufw deny 80/tcp (block web traffic) and sudo ufw allow 22/tcp (allow SSH).
+   3. Block ICMP echo requests (Pings): sudo iptables -I INPUT 1 -p icmp --icmp-type echo-request -j DROP.
+
+3. Scapy Script  Kali Linux    Write the packet_lab.py script (provided below).
+
+#!/usr/bin/env python3
+from scapy.all import *
+
+# Configuration Variables
+TARGET_IP = "192.168.56.103"  # Target Ubuntu VM IP (UPDATE THIS)
+DEST_PORT_BLOCKED = 80       # Denied port (from UFW rule)
+DEST_PORT_ALLOWED = 22       # Allowed port (SSH)
+UDP_PORT = 53
+
+def main():
+    # 1. ICMP Echo Request (should be dropped by iptables rule)
+    print("[*] Sending ICMP Echo Request...")
+    send(IP(dst=TARGET_IP) / ICMP(), verbose=0)
+
+    # 2. TCP SYN (to allowed port 22 - expected SYN/ACK response)
+    print(f"[*] Sending TCP SYN to port {DEST_PORT_ALLOWED}...")
+    send(IP(dst=TARGET_IP) / TCP(dport=DEST_PORT_ALLOWED, flags="S"), verbose=0)
+
+    # 3. TCP NULL (to allowed port 22 - expected RST response if no service running, or dropped)
+    print(f"[*] Sending TCP NULL packet (No flags)...")
+    send(IP(dst=TARGET_IP) / TCP(dport=DEST_PORT_ALLOWED, flags=0), verbose=0)
+
+    # 4. TCP FIN (to allowed port 22 - expected RST response if no service running, or dropped)
+    print(f"[*] Sending TCP FIN packet...")
+    send(IP(dst=TARGET_IP) / TCP(dport=DEST_PORT_ALLOWED, flags="F"), verbose=0)
+
+    # 5. UDP Packet (to port 53 - may generate ICMP port unreachable if no listener)
+    print(f"[*] Sending UDP to port {UDP_PORT}...")
+    send(IP(dst=TARGET_IP) / UDP(dport=UDP_PORT) / Raw(load="TestUDP"), verbose=0)
+
+    # 6. TCP Packet with Custom Payload (to blocked port 80 - expected RST or dropped)
+    print("[*] Sending TCP packet with custom payload to blocked port...")
+    send(IP(dst=TARGET_IP) / TCP(dport=DEST_PORT_BLOCKED, flags="PA") / Raw(load="HelloFromScapy"), verbose=0)
+
+    print("\n[+] Experiment Completed.")
+
+if __name__ == "__main__":
+    main()
+
+4. Execution & Capture  Kali Linux
+   1. Start Wireshark, select the interface (e.g., eth0).
+   2. Run the script: sudo python3 packet_lab.py.
+
+5. Observation & Cleanup  Kali/Ubuntu
+   1. Check Wireshark output using filters like icmp, 
+tcp.flags.syn==1 we will see TCP [SYN] Kali-&gt; Unix(port 80).. then no RST, no Syn/Ack. , or 
+tcp.port==22 In wireshark we will see TCP[SYN] kali -&gt; Ubuntu Tcp[Syn, ACk] Ubuntu-&gt; kali
+TCP [ACK] Kali-&gt; Ubuntu.
+   2. Test connections manually (optional): ping <Ubuntu-ip>, nc –v <Ubuntu-ip> 80, nc –v <Ubuntu-ip> 22, or ssh ubuntu@<ubuntu-ip>.
+   3. Remove the iptables rule: sudo iptables –D INPUT -p icmp --icmp-type echo-request -j DROP.
+
+1. Preparation     Client/Server VMs     1. Use Kali Linux (client) and Metasploitable2 (server).
+                                         2. Check VM IP addresses using ifconfig.
+
+2. Enable SSH      Metasploitable2       1. Start SSH service: sudo /etc/init.d/ssh start.
+   Service         (Server)              2. Check listening port: netstat -tlnp | grep 22                  You will see below output tcp 0 0 0.0.0.0:22 0.0.0.0:* LISTEN  
+
+3. Capture &       Kali Linux            1. Open Wireshark and select the interface (usually eth0) 
+   Connect         (Client)                 to start capturing packets.
+                                         2. Initiate SSH connection: 
+                                            ssh -o HostKeyAlgorithms=+ssh-rsa -o ssh-dss msfadmin@<Metasploitable2 IP>
+                                         3. Enter the password when prompted.
+
+4. Generate        Metasploitable2       Run commands inside the session to generate encrypted traffic:
+   Traffic         (Session)             hostname, ls, id, whoami, uname -a
+                                         Exit the session: exit.
+
+5. Analysis        Wireshark             1. Stop the capture.
+                                         2. Apply filter: tcp.port==22.
+                                         3. Observe packets showing the TCP 3-way handshake, Client/Server Protocol exchange, Key Exchange Init, Diffie Hellman Group Exchange, and subsequent packets marked as Encrypted Packet.
+
+1. Preparation     Kali/Ubuntu     Check IP addresses using ifconfig and ensure reachability using ping.
+
+2. Capture Setup   Kali Linux      1. Open Wireshark.
+                                   2. Select the internal network interface.
+                                   3. Apply filter: tcp.port==5000.
+
+3. Server Setup    Ubuntu          1. Allow port 5000 in UFW: sudo su, ufw allow 5000.
+                   (Server)        2. Start the TCP server (listening): nc -lvp 5000.
+
+4. Client          Kali Linux      Connect to the server: nc -v <Ubuntu IP> 5000.
+   Connection      (Client)
+
+5. Data Exchange   Both            Type messages in both terminals:         "hello ubuntu" (Kali)          "hello kali"   (Ubuntu)
+
+6. Termination &   Both/Wireshark  1. Close the connection in both terminals using CTRL+C.
+   Analysis                        2. Observe in Wireshark:
+                                      - TCP 3-Way Handshake (SYN, SYN/ACK, ACK)
+                                      - TCP Data Packets ([TCP segment data] with typed messages)
+                                      - TCP Connection Termination (FIN, ACK, FIN/ACK, ACK)
+
+1. Kali linux vm send a UDP broadcast message
+
+#!/usr/bin/env python3
+import socket
+import time
+# Create UDP socket
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+# Send 5 broadcast messages
+for i in range(5):
+    msg = f"DEVICE_DISCOVERY_{i}".encode()
+    sock.sendto(msg, ("255.255.255.255", 4000))
+    print("[Sent]", msg)
+    time.sleep(1)
+
+
+2. ubuntu vm Listen for broadcast traffic
+
+#!/usr/bin/env python3
+import socket
+# Create UDP socket and bind to port 4000
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+sock.bind(("", 4000))
+print("Listening for broadcast packets...")
+try:
+    while True:
+        data, addr = sock.recvfrom(1024)
+        print(f"Broadcast from {addr}: {data.decode()}")
+except KeyboardInterrupt:
+    print("Listener Stopped Manually")
+finally:
+    sock.close()
+
+
+3. open Wireshark in Kali linux and Analyze the packets
+udp.port == 4000
+
+4. In ubuntu vm before executing the python code, use below commands to allow udp packets
+
+sudo ufw allow 4000/udp
+sudo ufw status
+sudo ufw reload
+
+5. Then execute the python code in ubuntu
+python3 broadcast_listener.py
+Then execute the python code in kali linux vm
+python broadcast_sender.py
+
+6. Now observe the udp packets from kali linux to ubuntu(broadcast packets) by using filter
+udp.port==4000
+
+7. Analyze
+UDP packets sent from source: kali linux to Destination broadcast-ip i.e 255.255.255.255
