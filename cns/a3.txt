@@ -1,0 +1,26 @@
+import javax.crypto.*;
+import javax.crypto.spec.*;
+import java.security.*;
+import java.util.*;
+
+public class a3 {
+    public static void main(String[] a) throws Exception {
+        String p = "password";         String s = "Hello World";
+
+        Cipher c = Cipher.getInstance("DES/CBC/PKCS5Padding");
+        byte[] iv = new byte[8];
+        new SecureRandom().nextBytes(iv);
+
+        // Generate DES key (first 8 bytes of password)
+        SecretKey k = SecretKeyFactory.getInstance("DES")
+                .generateSecret(new DESKeySpec(Arrays.copyOf(p.getBytes(), 8)));
+
+        c.init(Cipher.ENCRYPT_MODE, k, new IvParameterSpec(iv));
+        String e = Base64.getEncoder().encodeToString(c.doFinal(s.getBytes()));
+
+        c.init(Cipher.DECRYPT_MODE, k, new IvParameterSpec(iv));
+        String d = new String(c.doFinal(Base64.getDecoder().decode(e)));
+
+        System.out.println("Enc: " + e);        System.out.println("IV: " + Base64.getEncoder().encodeToString(iv));        System.out.println("Dec: " + d);
+    }
+}
