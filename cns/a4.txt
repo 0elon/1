@@ -1,0 +1,20 @@
+import javax.crypto.*;
+import javax.crypto.spec.SecretKeySpec;
+import java.util.*;
+
+public class a4 {
+    public static void main(String[] a) throws Exception {
+        String k = "mysecretkey12345";   /* 16 chars = 128-bit key*/        String m = "Hello AES Hardcoded!";
+
+        SecretKeySpec key = new SecretKeySpec(k.getBytes(), "AES");
+        Cipher c = Cipher.getInstance("AES");
+
+        c.init(Cipher.ENCRYPT_MODE, key);
+        String e = Base64.getEncoder().encodeToString(c.doFinal(m.getBytes()));
+        System.out.println("Enc: " + e);
+
+        c.init(Cipher.DECRYPT_MODE, key);
+        String d = new String(c.doFinal(Base64.getDecoder().decode(e)));
+        System.out.println("Dec: " + d);
+    }
+}
