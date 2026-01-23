@@ -1,0 +1,21 @@
+public class a1 {
+    public static void main(String[] args) {
+        String t = "Hello World", e = "", d = "";        int s = 3;
+
+        for (char c : t.toCharArray()) {
+            if (Character.isLetter(c)) {
+                char b = Character.isUpperCase(c) ? 'A' : 'a';
+                enc += (char) ((c - b + s) % 26 + b);
+            } else e += c;
+        }
+
+        for (char c : enc.toCharArray()) {
+            if (Character.isLetter(c)) {
+                char b = Character.isUpperCase(c) ? 'A' : 'a';
+                d += (char) ((c - b + (26 - s)) % 26 + b);
+            } else d += c;
+        }
+      
+        System.out.println("Enc: " + e);        System.out.println("Dec: " + d);
+    }
+}
